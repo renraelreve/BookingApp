@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -6,19 +6,29 @@ import {
   ScrollView,
   Button,
   Alert,
+  TextInput,
+  TouchableOpacity,
 } from "react-native";
 import { Image } from "react-native";
 
 function DetailScreen({ route }) {
   const { event } = route.params;
+  const [selectedShowtime, setSelectedShowtime] = useState(null); // Track selected showtime
+  const [seats, setSeats] = useState(""); // Track number of seats to book
 
-  const handleBookSeats = (showtime) => {
-    // Implement booking logic here
+  const handleBookNow = (showtime) => {
+    setSelectedShowtime(showtime.sid); // Set the selected showtime to show the TextInput and hide the "Book Now" button
+  };
+
+  const handleConfirmBooking = (showtime) => {
+    // Handle the booking logic here
     Alert.alert(
-      "Booking",
-      `You have booked seats for showtime on ${showtime.date}`
+      "Booking Confirmed",
+      `You have booked ${seats} seat(s) for the showtime on ${showtime.date}`
     );
-    // You can navigate, call an API, or update the state here
+    // Optionally, reset the state or navigate away after booking
+    setSeats("");
+    setSelectedShowtime(null);
   };
 
   return (
@@ -37,7 +47,32 @@ function DetailScreen({ route }) {
               Available Seats: {show.balSeats}
             </Text>
           </View>
-          <Button title="Book Now" onPress={() => handleBookSeats(show)} />
+          <View style={styles.buttonContainer}>
+            {selectedShowtime !== show.sid ? (
+              <TouchableOpacity
+                style={styles.smallButton}
+                onPress={() => handleBookNow(show)}
+              >
+                <Text style={styles.buttonText}>Book Now</Text>
+              </TouchableOpacity>
+            ) : (
+              <View style={styles.inputAndButtonContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Seats"
+                  keyboardType="numeric"
+                  value={seats}
+                  onChangeText={setSeats}
+                />
+                <TouchableOpacity
+                  style={styles.confirmButton}
+                  onPress={() => handleConfirmBooking(show)}
+                >
+                  <Text style={styles.buttonText}>Confirm</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
         </View>
       ))}
     </ScrollView>
@@ -69,7 +104,7 @@ const styles = StyleSheet.create({
   },
   showtimeContainer: {
     flexDirection: "row", // Arrange items in a row
-    justifyContent: "space-between", // Space between info and button
+    justifyContent: "space-between", // Space between info and button/input
     alignItems: "center", // Align items vertically centered
     marginBottom: 15,
     padding: 10,
@@ -82,5 +117,37 @@ const styles = StyleSheet.create({
   showtimeText: {
     fontSize: 16,
     marginBottom: 2,
+  },
+  buttonContainer: {
+    flexDirection: "row-reverse", // Align the elements to the right
+    alignItems: "center",
+  },
+  smallButton: {
+    backgroundColor: "#007BFF",
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    marginLeft: 10, // Add space between buttons
+  },
+  inputAndButtonContainer: {
+    alignItems: "center", // Center the confirm button below the input
+  },
+  input: {
+    width: 60, // Smaller input width
+    padding: 5,
+    borderColor: "gray",
+    borderWidth: 1,
+    borderRadius: 5,
+    marginBottom: 10, // Space between input and confirm button
+  },
+  confirmButton: {
+    backgroundColor: "#28a745",
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 12, // Make text smaller
   },
 });
