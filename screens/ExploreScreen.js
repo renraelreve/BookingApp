@@ -70,6 +70,14 @@ function ExploreScreen({ navigation }) {
               {event.description}
             </Text>
             <Text style={{ fontSize: 16 }}>Event ID: {event.eid}</Text>
+            {event.imageUrl && (
+              <Image
+                source={{
+                  uri: event.imageUrl,
+                }}
+                style={{ width: 200, height: 200 }}
+              />
+            )}
           </View>
         )}
       />
