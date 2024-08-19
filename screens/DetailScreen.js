@@ -4,39 +4,96 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  Button,
   Alert,
   TextInput,
   TouchableOpacity,
+  NativeEventEmitter,
+  NativeModules,
 } from "react-native";
 import { Image } from "react-native";
+import base64 from "react-native-base64";
+import { bookingApi } from "../api/bookingApi";
 
 function DetailScreen({ route }) {
   const { event } = route.params;
-  const [selectedShowtime, setSelectedShowtime] = useState(null); // Track selected showtime
-  const [seats, setSeats] = useState(""); // Track number of seats to book
+  const [updatedEvent, setUpdatedEvent] = useState(event); // Track updated event data
+  const [selectedShowtime, setSelectedShowtime] = useState(null);
+  const [seats, setSeats] = useState("");
+
+  const userId = 1;
+
+  const username = "Abigail";
+  const password = "password123";
+  const token = base64.encode(`${username}:${password}`);
 
   const handleBookNow = (showtime) => {
-    setSelectedShowtime(showtime.sid); // Set the selected showtime to show the TextInput and hide the "Book Now" button
+    setSelectedShowtime(showtime.sid);
+  };
+
+  const handleBookingSubmit = async (sid) => {
+    const amount = parseInt(seats, 10); // Parse seats as an integer
+    if (amount) {
+      try {
+        const response = await bookingApi.post(
+          `/booking/users/${userId}/showtimes/${sid}`,
+          { bookedSeats: amount },
+          {
+            headers: {
+              Authorization: `Basic ${token}`,
+            },
+          }
+        );
+        console.log(response.data);
+        Alert.alert("Booking successful!");
+
+        // Update the local state to reflect the new balance seats
+        setUpdatedEvent((prevEvent) => ({
+          ...prevEvent,
+          showtime: prevEvent.showtime.map((show) =>
+            show.sid === sid
+              ? { ...show, balSeats: show.balSeats - amount }
+              : show
+          ),
+        }));
+
+        const eventEmitter = new NativeEventEmitter(
+          NativeModules.ReactNativeEventEmitter
+        );
+        eventEmitter.emit("bookingSuccess"); // Emit the event to notify ExploreScreen
+      } catch (error) {
+        console.error(error);
+        Alert.alert("Booking failed!");
+      }
+    }
   };
 
   const handleConfirmBooking = (showtime) => {
-    // Handle the booking logic here
     Alert.alert(
-      "Booking Confirmed",
-      `You have booked ${seats} seat(s) for the showtime on ${showtime.date}`
+      "Confirm Booking",
+      `You are about to book ${seats} seat(s) for the showtime on ${showtime.date}.`,
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Confirm",
+          onPress: () => {
+            handleBookingSubmit(showtime.sid);
+            setSeats("");
+            setSelectedShowtime(null);
+          },
+        },
+      ]
     );
-    // Optionally, reset the state or navigate away after booking
-    setSeats("");
-    setSelectedShowtime(null);
   };
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.title}>{event.description}</Text>
-      <Image source={{ uri: event.imageUrl }} style={styles.image} />
+      <Text style={styles.title}>{updatedEvent.description}</Text>
+      <Image source={{ uri: updatedEvent.imageUrl }} style={styles.image} />
       <Text style={styles.header}>Showtimes:</Text>
-      {event.showtime.map((show, index) => (
+      {updatedEvent.showtime.map((show, index) => (
         <View key={index} style={styles.showtimeContainer}>
           <View style={styles.showtimeInfo}>
             <Text style={styles.showtimeText}>Date: {show.date}</Text>
@@ -103,23 +160,23 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   showtimeContainer: {
-    flexDirection: "row", // Arrange items in a row
-    justifyContent: "space-between", // Space between info and button/input
-    alignItems: "center", // Align items vertically centered
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 15,
     padding: 10,
     borderRadius: 5,
     backgroundColor: "#f0f0f0",
   },
   showtimeInfo: {
-    flex: 1, // Allow info to take up the remaining space
+    flex: 1,
   },
   showtimeText: {
     fontSize: 16,
     marginBottom: 2,
   },
   buttonContainer: {
-    flexDirection: "row-reverse", // Align the elements to the right
+    flexDirection: "row-reverse",
     alignItems: "center",
   },
   smallButton: {
@@ -127,18 +184,18 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 5,
-    marginLeft: 10, // Add space between buttons
+    marginLeft: 10,
   },
   inputAndButtonContainer: {
-    alignItems: "center", // Center the confirm button below the input
+    alignItems: "center",
   },
   input: {
-    width: 60, // Smaller input width
+    width: 60,
     padding: 5,
     borderColor: "gray",
     borderWidth: 1,
     borderRadius: 5,
-    marginBottom: 10, // Space between input and confirm button
+    marginBottom: 10,
   },
   confirmButton: {
     backgroundColor: "#28a745",
@@ -148,6 +205,6 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "white",
-    fontSize: 12, // Make text smaller
+    fontSize: 12,
   },
 });

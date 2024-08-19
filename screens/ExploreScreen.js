@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import {
   Alert,
   Image,
@@ -7,23 +8,32 @@ import {
   View,
   FlatList,
   Pressable,
+  NativeEventEmitter,
+  NativeModules,
 } from "react-native";
-import { useState, useEffect } from "react";
 import base64 from "react-native-base64";
-import { useNavigation } from "@react-navigation/native"; // Import useNavigation
-
+import { useNavigation } from "@react-navigation/native";
 import { bookingApi } from "../api/bookingApi";
 
 const deviceWidth = Dimensions.get("window").width;
 
 function ExploreScreen() {
-  const navigation = useNavigation(); // Use navigation hook
+  const navigation = useNavigation();
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     loadEvents();
+
+    const eventEmitter = new NativeEventEmitter(
+      NativeModules.ReactNativeEventEmitter
+    ); // Initialize the event emitter
+    const subscription = eventEmitter.addListener("bookingSuccess", () => {
+      loadEvents(); // Reload events when a booking is successful
+    });
+
+    return () => subscription.remove(); // Clean up the subscription on unmount
   }, []);
 
   const loadEvents = async () => {
@@ -64,7 +74,6 @@ function ExploreScreen() {
         keyExtractor={(event) => event.eid.toString()}
         renderItem={({ item: event }) => (
           <Pressable onPress={() => navigation.navigate("Detail", { event })}>
-            {/* Pass the event as a parameter */}
             <View style={styles.itemContainer}>
               {event.imageUrl && (
                 <Image source={{ uri: event.imageUrl }} style={styles.image} />
@@ -97,7 +106,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 100,
     resizeMode: "cover",
-    marginBottom: 5, // Add margin to separate the image from the text
+    marginBottom: 5,
   },
   descriptionText: {
     fontSize: 12,
