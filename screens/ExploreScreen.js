@@ -6,15 +6,18 @@ import {
   Text,
   View,
   FlatList,
+  Pressable,
 } from "react-native";
 import { useState, useEffect } from "react";
 import base64 from "react-native-base64";
+import { useNavigation } from "@react-navigation/native"; // Import useNavigation
 
 import { bookingApi } from "../api/bookingApi";
 
 const deviceWidth = Dimensions.get("window").width;
 
 function ExploreScreen() {
+  const navigation = useNavigation(); // Use navigation hook
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -60,13 +63,16 @@ function ExploreScreen() {
         data={events}
         keyExtractor={(event) => event.eid.toString()}
         renderItem={({ item: event }) => (
-          <View style={styles.itemContainer}>
-            {event.imageUrl && (
-              <Image source={{ uri: event.imageUrl }} style={styles.image} />
-            )}
-            <Text style={styles.descriptionText}>{event.description}</Text>
-            <Text style={styles.eventIdText}>Event ID: {event.eid}</Text>
-          </View>
+          <Pressable onPress={() => navigation.navigate("Detail", { event })}>
+            {/* Pass the event as a parameter */}
+            <View style={styles.itemContainer}>
+              {event.imageUrl && (
+                <Image source={{ uri: event.imageUrl }} style={styles.image} />
+              )}
+              <Text style={styles.descriptionText}>{event.description}</Text>
+              <Text style={styles.eventIdText}>Event ID: {event.eid}</Text>
+            </View>
+          </Pressable>
         )}
         numColumns={2}
       />
