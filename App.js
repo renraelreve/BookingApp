@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack"; // Import Stack Navigator
@@ -42,12 +41,18 @@ export default function App() {
       <Stack.Screen
         name="Explore"
         component={ExploreScreen}
-        options={{ headerShown: false }} // Hide header if not needed
+        options={{
+          headerTitle: "Explore",
+          headerTitleAlign: 'center',
+        }}
       />
       <Stack.Screen
         name="Detail"
         component={DetailScreen}
-        options={{ title: "Event Details" }} // Customize the header title
+        options={{
+          headerTitle: "Event Details",
+          headerTitleAlign: 'center',
+        }}
       />
     </Stack.Navigator>
   );
@@ -59,11 +64,13 @@ export default function App() {
           headerStyle: { backgroundColor: Colors.PRIMARY },
           headerTintColor: "white",
           tabBarActiveTintColor: Colors.PRIMARY,
+          headerTitle: "BookingApp", 
+          headerTitleAlign: 'center', 
         }}
       >
         <BottomTab.Screen
           name="Home"
-          component={ExploreStack}  // Use the Stack Navigator
+          component={ExploreStack}
           options={{
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="search" size={size} color={color} />
