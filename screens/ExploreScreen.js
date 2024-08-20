@@ -7,6 +7,8 @@ import {
   View,
   FlatList,
   Pressable,
+  NativeEventEmitter,
+  NativeModules,
 } from "react-native";
 import { useState, useEffect } from "react";
 import base64 from "react-native-base64";
@@ -24,6 +26,15 @@ function ExploreScreen() {
 
   useEffect(() => {
     loadEvents();
+
+    const eventEmitter = new NativeEventEmitter(
+      NativeModules.ReactNativeEventEmitter
+    ); // Initialize the event emitter
+    const subscription = eventEmitter.addListener("bookingSuccess", () => {
+      loadEvents(); // Reload events when a booking is successful
+    });
+
+    return () => subscription.remove(); // Clean up the subscription on unmount
   }, []);
 
   const loadEvents = async () => {
@@ -75,7 +86,7 @@ function ExploreScreen() {
           </Pressable>
         )}
         numColumns={2}
-        columnWrapperStyle={styles.columnWrapper} 
+        columnWrapperStyle={styles.columnWrapper}
       />
     </View>
   );
@@ -90,18 +101,18 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   columnWrapper: {
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
   },
   itemContainer: {
-    width: (deviceWidth / 2) - 20,
+    width: deviceWidth / 2 - 20,
     margin: 10,
     alignItems: "center",
   },
   image: {
-    width: 150, 
-    height: 150, 
+    width: 150,
+    height: 150,
     resizeMode: "cover",
-    borderRadius: 8, 
+    borderRadius: 8,
     marginBottom: 5,
   },
   descriptionText: {
@@ -112,6 +123,6 @@ const styles = StyleSheet.create({
   eventIdText: {
     fontSize: 12,
     textAlign: "center",
-    color: "gray", 
+    color: "gray",
   },
 });
