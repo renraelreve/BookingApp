@@ -112,58 +112,57 @@ function DetailScreen({ route }) {
   };
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}
-    >
-      <Text style={styles.description}>{event.description}</Text>
-      <Image source={{ uri: event.imageUrl }} style={styles.image} />
-      <Text style={styles.details}>{eventDetail}</Text>
-      <Text style={styles.header}>Showtimes:</Text>
-      {updatedEvent.showtime.map((show, index) => (
-        <View key={index} style={styles.showtimeContainer}>
-          <View style={styles.showtimeInfo}>
-            <Text style={styles.showtimeText}>Date: {show.date}</Text>
-            <Text style={styles.showtimeText}>
-              Total Tickets: {show.totalSeats}
-            </Text>
-            <Text style={styles.showtimeText}>
-              Available Tickets: {show.balSeats}
-            </Text>
-          </View>
-          <View style={styles.buttonContainer}>
-            {selectedShowtime !== show.sid ? (
-              <TouchableOpacity
-                style={styles.smallButton}
-                onPress={() => handleBookNow(show)}
-              >
-                <Text style={styles.buttonText}>Book Now</Text>
-              </TouchableOpacity>
-            ) : (
-              <View style={styles.inputAndButtonContainer}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Tickets"
-                  keyboardType="numeric"
-                  value={tickets}
-                  onChangeText={setTickets}
-                />
+    <ScrollView>
+      <View style={styles.container}>
+        <Text style={styles.description}>{event.description}</Text>
+        <Image source={{ uri: event.imageUrl }} style={styles.image} />
+        <Text style={styles.details}>{eventDetail}</Text>
+        <Text style={styles.header}>Showtimes:</Text>
+        {updatedEvent.showtime.map((show, index) => (
+          <View key={index} style={styles.showtimeContainer}>
+            <View style={styles.showtimeInfo}>
+              <Text style={styles.showtimeText}>Date: {show.date}</Text>
+              <Text style={styles.showtimeText}>
+                Total Tickets: {show.totalSeats}
+              </Text>
+              <Text style={styles.showtimeText}>
+                Available Tickets: {show.balSeats}
+              </Text>
+            </View>
+            <View style={styles.buttonContainer}>
+              {selectedShowtime !== show.sid ? (
                 <TouchableOpacity
-                  style={styles.confirmButton}
-                  onPress={() => handleConfirmBooking(show)}
+                  style={styles.smallButton}
+                  onPress={() => handleBookNow(show)}
                 >
-                  <Text style={styles.buttonText}>Confirm</Text>
+                  <Text style={styles.buttonText}>Book Now</Text>
                 </TouchableOpacity>
-              </View>
-            )}
+              ) : (
+                <View style={styles.inputAndButtonContainer}>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Tickets"
+                    keyboardType="numeric"
+                    value={tickets}
+                    onChangeText={setTickets}
+                  />
+                  <TouchableOpacity
+                    style={styles.confirmButton}
+                    onPress={() => handleConfirmBooking(show)}
+                  >
+                    <Text style={styles.buttonText}>Confirm</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
           </View>
-        </View>
-      ))}
-      {/* {isSignedIn ? (
+        ))}
+        {/* {isSignedIn ? (
         <Button title="Buy Tickets" onPress={() => {}} />
       ) : (
         <Text style={styles.signInPrompt}>Please sign in to buy tickets.</Text>
       )} */}
+      </View>
     </ScrollView>
   );
 }
