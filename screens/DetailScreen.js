@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, Button } from "react-native";
+import { View, Text, StyleSheet, Image, Button, ScrollView } from "react-native";
 
 function DetailScreen({ route }) {
   const { event, isSignedIn } = route.params;
@@ -12,6 +12,7 @@ function DetailScreen({ route }) {
   };
 
   return (
+    <ScrollView>
     <View style={styles.container}>
       <Text style={styles.description}>{event.description}</Text> 
       <Image source={{ uri: event.imageUrl }} style={styles.image} />
@@ -23,6 +24,7 @@ function DetailScreen({ route }) {
         <Text style={styles.signInPrompt}>Please sign in to buy tickets.</Text>
       )}
     </View>
+    </ScrollView>
   );
 }
 
