@@ -75,6 +75,7 @@ function ExploreScreen() {
           </Pressable>
         )}
         numColumns={2}
+        columnWrapperStyle={styles.columnWrapper} 
       />
     </View>
   );
@@ -86,26 +87,31 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
-    padding: 10,
+    //padding: 10,
+  },
+  columnWrapper: {
+    justifyContent: 'space-between',
   },
   itemContainer: {
-    width: deviceWidth / 2 - 10,
-    margin: 5,
+    width: (deviceWidth / 2) - 20,
+    margin: 10,
     alignItems: "center",
   },
   image: {
-    width: "100%",
-    height: 100,
+    width: 150, 
+    height: 150, 
     resizeMode: "cover",
-    marginBottom: 5, // Add margin to separate the image from the text
+    borderRadius: 8, 
+    marginBottom: 5,
   },
   descriptionText: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: "bold",
     textAlign: "center",
   },
   eventIdText: {
-    fontSize: 10,
+    fontSize: 12,
     textAlign: "center",
+    color: "gray", 
   },
 });
