@@ -15,6 +15,7 @@ import { Colors } from "./styles/colors";
 import ExploreScreen from "./screens/ExploreScreen";
 import AccountScreen from "./screens/AccountScreen";
 import DetailScreen from "./screens/DetailScreen";
+import CalendarScreen from "./screens/CalendarScreen";
 
 const BottomTab = createBottomTabNavigator();
 const Stack = createStackNavigator(); // Create Stack Navigator
@@ -43,7 +44,7 @@ export default function App() {
         component={ExploreScreen}
         options={{
           headerTitle: "Explore",
-          headerTitleAlign: 'center',
+          headerTitleAlign: "center",
         }}
       />
       <Stack.Screen
@@ -51,7 +52,7 @@ export default function App() {
         component={DetailScreen}
         options={{
           headerTitle: "Event Details",
-          headerTitleAlign: 'center',
+          headerTitleAlign: "center",
         }}
       />
     </Stack.Navigator>
@@ -64,8 +65,8 @@ export default function App() {
           headerStyle: { backgroundColor: Colors.PRIMARY },
           headerTintColor: "white",
           tabBarActiveTintColor: Colors.PRIMARY,
-          headerTitle: "BookingApp", 
-          headerTitleAlign: 'center', 
+          headerTitle: "BookingApp",
+          headerTitleAlign: "center",
         }}
       >
         <BottomTab.Screen
@@ -77,6 +78,17 @@ export default function App() {
             ),
           }}
         />
+
+        <BottomTab.Screen
+          name="Calendar"
+          component={CalendarScreen}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="happy-outline" size={size} color={color} />
+            ),
+          }}
+        />
+
         <BottomTab.Screen
           name="Account"
           component={AccountScreen}
