@@ -12,18 +12,18 @@ function DetailScreen({ route }) {
   };
 
   return (
-    <ScrollView>
-    <View style={styles.container}>
-      <Text style={styles.description}>{event.description}</Text> 
-      <Image source={{ uri: event.imageUrl }} style={styles.image} />
-      <Text style={styles.details}>{eventDetails[event.eid]}</Text> 
-      
-      {isSignedIn ? (
-        <Button title="Buy Tickets" onPress={() => {}} />
-      ) : (
-        <Text style={styles.signInPrompt}>Please sign in to buy tickets.</Text>
-      )}
-    </View>
+    <ScrollView style={styles.scrollContainer}> 
+      <View style={styles.container}>
+        <Text style={styles.description}>{event.description}</Text> 
+        <Image source={{ uri: event.imageUrl }} style={styles.image} />
+        <Text style={styles.details}>{eventDetails[event.eid]}</Text> 
+        
+        {isSignedIn ? (
+          <Button title="Buy Tickets" onPress={() => {}} />
+        ) : (
+          <Text style={styles.signInPrompt}>Please sign in to buy tickets.</Text>
+        )}
+      </View>
     </ScrollView>
   );
 }
@@ -31,6 +31,10 @@ function DetailScreen({ route }) {
 export default DetailScreen;
 
 const styles = StyleSheet.create({
+  scrollContainer: {
+    flex: 1,
+    backgroundColor: "#DCEEF9", // Set the background color to cover the whole screen
+  },
   container: {
     flex: 1,
     alignItems: "center",

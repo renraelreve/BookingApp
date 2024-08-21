@@ -86,8 +86,9 @@ export default ExploreScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: "#DCEEF9",
     //padding: 10,
+    paddingTop: 15
   },
   columnWrapper: {
     justifyContent: 'space-between',
