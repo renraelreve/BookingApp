@@ -14,6 +14,7 @@ import {
 } from "react-native";
 
 import base64 from "react-native-base64";
+import { useNavigation } from "@react-navigation/native";
 import { bookingApi } from "../api/bookingApi";
 
 function DetailScreen({ route }) {
@@ -21,6 +22,8 @@ function DetailScreen({ route }) {
   const [updatedEvent, setUpdatedEvent] = useState(event); // Track updated event data
   const [selectedShowtime, setSelectedShowtime] = useState(null);
   const [tickets, setTickets] = useState("");
+
+  const navigation = useNavigation(); // Use the navigation hook
 
   // Dummy event details
   const eventDetails = {
@@ -116,6 +119,15 @@ function DetailScreen({ route }) {
       <View style={styles.container}>
         <Text style={styles.description}>{event.description}</Text>
         <Image source={{ uri: event.imageUrl }} style={styles.image} />
+
+        {/* Button to navigate to PhotoScreen */}
+        <TouchableOpacity
+          style={styles.photoButton}
+          onPress={() => navigation.navigate("Photo", { event })}
+        >
+          <Text style={styles.buttonText}>Take Event Photo</Text>
+        </TouchableOpacity>
+
         <Text style={styles.details}>{eventDetail}</Text>
         <Text style={styles.header}>Showtimes:</Text>
         {updatedEvent.showtime.map((show, index) => (
@@ -254,5 +266,14 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontSize: 12,
+  },
+
+  photoButton: {
+    backgroundColor: "#28a745",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginBottom: 20,
+    alignSelf: "center", // Center the button horizontally
   },
 });
