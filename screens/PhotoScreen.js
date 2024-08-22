@@ -1,3 +1,4 @@
+import { CLOUDINARY_UPLOAD_PRESET, CLOUDINARY_CLOUD_NAME } from "@env";
 import React, { useState, useContext } from "react";
 import { View, Text, Button, StyleSheet, Image, Alert } from "react-native";
 import {
@@ -9,6 +10,9 @@ import {
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
 import { PhotoContext } from "../context/PhotoContext"; // Import PhotoContext
+
+console.log(CLOUDINARY_UPLOAD_PRESET); // Should print 'bookingApp'
+console.log(CLOUDINARY_CLOUD_NAME); // Should print 'dfedcek1j'
 
 const imageOptions = {
   mediaTypes: MediaTypeOptions.Images,
@@ -40,12 +44,12 @@ function PhotoScreen({ route, navigation }) {
       type: "image/jpeg",
       name: "photo.jpg",
     });
-    data.append("upload_preset", "bookingApp"); // Ensure the upload preset is a string
-    data.append("cloud_name", "dfedcek1j");
+    data.append("upload_preset", CLOUDINARY_UPLOAD_PRESET); // Ensure the upload preset is a string
+    data.append("cloud_name", CLOUDINARY_CLOUD_NAME);
 
     try {
       const response = await axios.post(
-        `https://api.cloudinary.com/v1_1/dfedcek1j/image/upload`,
+        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
         data,
         {
           headers: {
