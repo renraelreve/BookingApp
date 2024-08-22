@@ -114,7 +114,13 @@ export default AccountScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+<<<<<<< HEAD
     padding: 20,
+=======
+    backgroundColor: "#DCEEF9",
+    alignItems: "center",
+    padding: 10,
+>>>>>>> main
   },
   contentContainer: {
     alignItems: "center",
