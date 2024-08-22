@@ -97,8 +97,8 @@ export default ExploreScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
-    //padding: 10,
+    backgroundColor: "#DCEEF9",
+    paddingTop: 15,
   },
   columnWrapper: {
     justifyContent: "space-between",
@@ -119,6 +119,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
     textAlign: "center",
+    
   },
   eventIdText: {
     fontSize: 12,
