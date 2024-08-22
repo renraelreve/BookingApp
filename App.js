@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Text } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -12,7 +12,6 @@ import {
   Satisfy_400Regular,
 } from '@expo-google-fonts/satisfy';
 import Ionicons from "@expo/vector-icons/Ionicons";
-import * as SplashScreen from "expo-splash-screen";
 
 import ExploreScreen from "./screens/ExploreScreen";
 import AccountScreen from "./screens/AccountScreen";
@@ -28,9 +27,7 @@ const Colors = {
 };
 
 const BottomTab = createBottomTabNavigator();
-const Stack = createStackNavigator(); 
-
-SplashScreen.preventAutoHideAsync();
+const Stack = createStackNavigator();
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -38,12 +35,6 @@ export default function App() {
     Rubik_700Bold,
     Satisfy_400Regular,
   });
-
-  useEffect(() => {
-    if (fontsLoaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
 
   if (!fontsLoaded) return null;
 
