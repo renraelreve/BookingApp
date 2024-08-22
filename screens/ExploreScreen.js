@@ -14,6 +14,7 @@ import { useState, useEffect } from "react";
 import base64 from "react-native-base64";
 import { useNavigation } from "@react-navigation/native"; // Import useNavigation
 
+
 import { bookingApi } from "../api/bookingApi";
 
 const deviceWidth = Dimensions.get("window").width;
@@ -41,29 +42,29 @@ function ExploreScreen() {
     try {
       setIsLoading(true);
 
-      const username = "Abigail";
-      const password = "password123";
-      const token = base64.encode(`${username}:${password}`);
+      // const username = "Abigail";
+      // const password = "password123";
+      // const token = base64.encode(`${username}:${password}`);
 
       const response = await bookingApi.get("/events", {
-        headers: {
-          Authorization: `Basic ${token}`,
-        },
+        // headers: {
+        //   Authorization: `Basic ${token}`,
+        // }, backend updated to allow GET events without Auth
       });
 
       setEvents(response.data);
       console.log(response.data);
     } catch (error) {
       console.log(error);
-      if (error.response && error.response.status === 401) {
-        Alert.alert(
-          "Unauthorized",
-          "Please check your authentication credentials."
-        );
-      } else {
+      // if (error.response && error.response.status === 401) {
+      //   Alert.alert(
+      //     "Unauthorized",
+      //     "Please check your authentication credentials."
+      //   );
+      // } 
+      // else {
         setError(error.message);
-      }
-    } finally {
+      } finally {
       setIsLoading(false);
     }
   };
@@ -81,7 +82,7 @@ function ExploreScreen() {
                 <Image source={{ uri: event.imageUrl }} style={styles.image} />
               )}
               <Text style={styles.descriptionText}>{event.description}</Text>
-              <Text style={styles.eventIdText}>Event ID: {event.eid}</Text>
+              {/* <Text style={styles.eventIdText}>Event ID: {event.eid}</Text> */}
             </View>
           </Pressable>
         )}
