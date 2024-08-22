@@ -19,6 +19,7 @@ import ExploreScreen from "./screens/ExploreScreen";
 import AccountScreen from "./screens/AccountScreen";
 import DetailScreen from "./screens/DetailScreen";
 import LoginScreen from "./screens/LoginScreen";
+import BookieCalendar from "./components/Calendar";
 
 const BottomTab = createBottomTabNavigator();
 const Stack = createStackNavigator(); // Create Stack Navigator
@@ -79,6 +80,14 @@ function App() {
         component={state.username ? AccountScreen : LoginScreen}
         options={{
           headerTitle: state.username ? state.username + '\'s Book!ngs' : "Log In",
+          headerTitleAlign: 'center',
+        }}
+      />
+      <Stack.Screen
+        name="CalendarScreen"
+        component={state.username ? BookieCalendar : LoginScreen}
+        options={{
+          headerTitle: state.username ? state.username + '\'s Calendar' : "Log In",
           headerTitleAlign: 'center',
         }}
       />

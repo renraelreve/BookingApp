@@ -18,9 +18,6 @@ import base64 from "react-native-base64";
 import { bookingApi } from "../api/bookingApi";
 import { Context as AuthContext } from '../context/AuthContext';
 
-
-
-
 function AccountScreen({ navigation }) {
   // function AccountScreen({ route }) {
   // const { username, password } = route.params;
@@ -52,15 +49,16 @@ function AccountScreen({ navigation }) {
       console.log("response.data");
       console.log(response.data);
     } catch (error) {
-      Alert.alert("Error!");
       console.log(error);
       if (error.response && error.response.status === 401) {
         Alert.alert(
           "Unauthorized",
-          "Please check your authentication credentials."
+          "You are not a book!e yet."
         );
+        navigation.navigate("LoginScreen");
       } else {
         setError(error.message);
+        navigation.navigate("LoginScreen");
       }
     } finally {
       setIsLoading(false);
@@ -72,13 +70,18 @@ function AccountScreen({ navigation }) {
     navigation.navigate("Explore");
   };
 
+  const calendarHandler = () => {
+    navigation.navigate("CalendarScreen");
+  };
+
   return (
     <ScrollView>
       <View style={styles.container}>
+      {/* <Text>User Id: {bookings.uid}</Text> */}
         {bookings.booking?.map((item, index) => (
           <View key={index} style={styles.container}>
             <View style={styles.showtimeText}>
-              {/* <Text>Booking Id: {item.bid}</Text> */}
+              
               <Text>Event: {item.showtimeEventDescription}</Text>
               <Text>Show time: {item.showtimeDate}</Text>
               <Text>Total Tickets Booked: {item.bookedSeats}
@@ -88,6 +91,13 @@ function AccountScreen({ navigation }) {
         ))}      
       
       </View>
+      <View style={styles.container}>
+        <TouchableOpacity 
+          onPress={calendarHandler}
+          style={styles.button}>
+          <Text style={styles.buttonText}>Activate Calendar</Text>
+        </TouchableOpacity>  
+      </View>    
       <View style={styles.container}>
         <TouchableOpacity 
           onPress={logoutHandler}

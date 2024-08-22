@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   View,
   Text,
@@ -14,13 +14,16 @@ import {
 } from "react-native";
 
 import base64 from "react-native-base64";
+import { Context as AuthContext } from '../context/AuthContext';
 import { bookingApi } from "../api/bookingApi";
+import Calendar from "../components/Calendar.js"
 
 function DetailScreen({ route }) {
   const { event, isSignedIn } = route.params;
   const [updatedEvent, setUpdatedEvent] = useState(event); // Track updated event data
   const [selectedShowtime, setSelectedShowtime] = useState(null);
   const [tickets, setTickets] = useState("");
+  const { state, username } = useContext(AuthContext);
 
   // Dummy event details
   const eventDetails = {
@@ -32,11 +35,11 @@ function DetailScreen({ route }) {
   // Handle cases where event.eid is not in eventDetails
   const eventDetail = eventDetails[event.eid] || "Details not available.";
 
-  const userId = 1;
+  // const userId = 1;
 
-  const username = "Abigail";
-  const password = "password123";
-  const token = base64.encode(`${username}:${password}`);
+  // const username = "Abigail";
+  // const password = "password123";
+  const token = base64.encode(`${state.username}:${state.password}`);
 
   // Sort showtimes by date from oldest to latest
   useEffect(() => {
@@ -59,8 +62,17 @@ function DetailScreen({ route }) {
     const amount = parseInt(tickets, 10); // Parse tickets as an integer
     if (amount) {
       try {
+        const getUid = await bookingApi.get("/users/find", {
+          headers: {
+            Authorization: `Basic ${token}`,
+          },
+          params: {
+            name: state.username,
+          }
+        });
+        console.log("This is it getUid.data.uid the hard way" + getUid.data.uid);
         const response = await bookingApi.post(
-          `/booking/users/${userId}/showtimes/${sid}`,
+          `/booking/users/${getUid.data.uid}/showtimes/${sid}`,
           { bookedSeats: amount },
           {
             headers: {
@@ -79,6 +91,7 @@ function DetailScreen({ route }) {
               ? { ...show, balSeats: show.balSeats - amount }
               : show
           ),
+          
         }));
 
         const eventEmitter = new NativeEventEmitter(
@@ -95,7 +108,7 @@ function DetailScreen({ route }) {
   const handleConfirmBooking = (showtime) => {
     Alert.alert(
       "Confirm Booking",
-      `You are about to book${tickets} ticket${tickets > 1 ? "s" : ""} for the show time on ${showtime.date}.`,
+      `You are about to book ${tickets} ticket${tickets > 1 ? "s" : ""} for the show time on ${showtime.date}.`,
       [
         {
           text: "Cancel",
@@ -133,7 +146,7 @@ function DetailScreen({ route }) {
             </View>
             <View style={styles.buttonContainer}>
               {selectedShowtime !== show.sid ? (
-                <TouchableOpacity
+                state.username && <TouchableOpacity
                   style={styles.smallButton}
                   onPress={() => handleBookNow(show)}
                 >

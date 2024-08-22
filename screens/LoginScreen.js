@@ -11,8 +11,8 @@ import {Context as AuthContext} from '../context/AuthContext';
 
 function LoginScreen({ navigation }) {
 
-	const [username, setUsername] = useState("Abigail");
-  const [password, setPassword] = useState("password123");
+	const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const { state, login, createuser } = useContext(AuthContext);
 
@@ -32,7 +32,6 @@ function LoginScreen({ navigation }) {
   };
 
   const addUserHandler = () => {
-    Alert.alert(username + " has joined as a Book!e");
     // navigation.navigate("Account", {
     //   username: username,
     // });
@@ -48,7 +47,7 @@ function LoginScreen({ navigation }) {
           style={styles.input}
           onChangeText={setUsername}
           value={username}
-          placeholder="User Name"
+          placeholder="Book!e name"
           keyboardType="default"
         />
       </View>
@@ -57,7 +56,7 @@ function LoginScreen({ navigation }) {
           style={styles.input}
           onChangeText={setPassword}
           value={password}
-          placeholder="Password"
+          placeholder="password"
           secureTextEntry={!passwordVisible}
         />
         <TouchableOpacity
@@ -78,7 +77,7 @@ function LoginScreen({ navigation }) {
       <View style={styles.signupContainer}>
         <TouchableOpacity 
           onPress={addUserHandler}>
-        <Text style={styles.instructionText}>No Account?  Create New User</Text>
+        <Text style={styles.instructionText}>No Account?  Join as a Book!e</Text>
         </TouchableOpacity>
       </View>
     </View>
