@@ -172,7 +172,9 @@ export default DetailScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    //alignItems: "center",
+    //justifyContent: "center",
+    backgroundColor: "#DCEEF9",
   },
   contentContainer: {
     alignItems: "center",
