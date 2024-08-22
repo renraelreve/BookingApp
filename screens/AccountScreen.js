@@ -16,16 +16,16 @@ import {
 
 import base64 from "react-native-base64";
 import { bookingApi } from "../api/bookingApi";
-import { Context as AuthContext } from '../context/AuthContext';
+import { Context as AuthContext } from "../context/AuthContext";
 
 function AccountScreen({ navigation }) {
   // function AccountScreen({ route }) {
   // const { username, password } = route.params;
-  const {state, logout } = useContext(AuthContext);
-  const [ bookings, setBookings ] = useState([]);
+  const { state, logout } = useContext(AuthContext);
+  const [bookings, setBookings] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  
+
   useEffect(() => {
     loadBookings();
     console.log("UseEffect loadBookings");
@@ -36,14 +36,14 @@ function AccountScreen({ navigation }) {
       setIsLoading(true);
       console.log(state.username, state.password);
       const token = base64.encode(`${state.username}:${state.password}`);
-  
+
       const response = await bookingApi.get("/users/find", {
         headers: {
           Authorization: `Basic ${token}`,
         },
         params: {
           name: state.username,
-        }
+        },
       });
       setBookings(response.data);
       console.log("response.data");
@@ -51,10 +51,7 @@ function AccountScreen({ navigation }) {
     } catch (error) {
       console.log(error);
       if (error.response && error.response.status === 401) {
-        Alert.alert(
-          "Unauthorized",
-          "You are not a book!e yet."
-        );
+        Alert.alert("Unauthorized", "You are not a book!e yet.");
         navigation.navigate("LoginScreen");
       } else {
         setError(error.message);
@@ -77,34 +74,27 @@ function AccountScreen({ navigation }) {
   return (
     <ScrollView>
       <View style={styles.container}>
-      {/* <Text>User Id: {bookings.uid}</Text> */}
+        {/* <Text>User Id: {bookings.uid}</Text> */}
         {bookings.booking?.map((item, index) => (
           <View key={index} style={styles.container}>
             <View style={styles.showtimeText}>
-              
               <Text>Event: {item.showtimeEventDescription}</Text>
               <Text>Show time: {item.showtimeDate}</Text>
-              <Text>Total Tickets Booked: {item.bookedSeats}
-              </Text>
+              <Text>Total Tickets Booked: {item.bookedSeats}</Text>
             </View>
           </View>
-        ))}      
-      
+        ))}
       </View>
       <View style={styles.container}>
-        <TouchableOpacity 
-          onPress={calendarHandler}
-          style={styles.button}>
+        <TouchableOpacity onPress={calendarHandler} style={styles.button}>
           <Text style={styles.buttonText}>Activate Calendar</Text>
-        </TouchableOpacity>  
-      </View>    
+        </TouchableOpacity>
+      </View>
       <View style={styles.container}>
-        <TouchableOpacity 
-          onPress={logoutHandler}
-          style={styles.button}>
+        <TouchableOpacity onPress={logoutHandler} style={styles.button}>
           <Text style={styles.buttonText}>Logout</Text>
-        </TouchableOpacity>  
-      </View>    
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 }
@@ -114,13 +104,9 @@ export default AccountScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-<<<<<<< HEAD
-    padding: 20,
-=======
     backgroundColor: "#DCEEF9",
     alignItems: "center",
     padding: 10,
->>>>>>> main
   },
   contentContainer: {
     alignItems: "center",
@@ -209,6 +195,6 @@ const styles = StyleSheet.create({
     padding: 10,
     alignItems: "center",
     marginTop: 20,
-    width: '100%',
+    width: "100%",
   },
 });
