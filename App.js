@@ -1,7 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useContext } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack"; // Import Stack Navigator
+import {Provider as AuthProvider} from './context/AuthContext.js';
+import {Context as AuthContext} from './context/AuthContext';
+
 // For using custom fonts
 import {
   Rubik_400Regular,
@@ -15,13 +18,17 @@ import { Colors } from "./styles/colors";
 import ExploreScreen from "./screens/ExploreScreen";
 import AccountScreen from "./screens/AccountScreen";
 import DetailScreen from "./screens/DetailScreen";
+import LoginScreen from "./screens/LoginScreen";
 
 const BottomTab = createBottomTabNavigator();
 const Stack = createStackNavigator(); // Create Stack Navigator
 
 SplashScreen.preventAutoHideAsync();
 
-export default function App() {
+function App() {
+  const {state} = useContext(AuthContext);
+  console.log(state);
+
   const [fontsLoaded] = useFonts({
     Rubik_400Regular,
     Rubik_700Bold,
@@ -57,6 +64,27 @@ export default function App() {
     </Stack.Navigator>
   );
 
+  const AccountStack = () => (
+    <Stack.Navigator initialRouteName={"LoginScreen"}>
+      <Stack.Screen
+        name="LoginScreen"
+        component={LoginScreen}
+        options={{
+          headerTitle: "Log In",
+          headerTitleAlign: 'center',
+        }}
+      />
+      <Stack.Screen
+        name="AccountScreen"
+        component={state.username ? AccountScreen : LoginScreen}
+        options={{
+          headerTitle: state.username ? state.username + '\'s Book!ngs' : "Log In",
+          headerTitleAlign: 'center',
+        }}
+      />
+    </Stack.Navigator>
+  );
+
   return (
     <NavigationContainer>
       <BottomTab.Navigator
@@ -64,7 +92,7 @@ export default function App() {
           headerStyle: { backgroundColor: Colors.PRIMARY },
           headerTintColor: "white",
           tabBarActiveTintColor: Colors.PRIMARY,
-          headerTitle: "BookingApp", 
+          headerTitle: "Book!e", 
           headerTitleAlign: 'center', 
         }}
       >
@@ -79,7 +107,8 @@ export default function App() {
         />
         <BottomTab.Screen
           name="Account"
-          component={AccountScreen}
+          component={AccountStack}
+          initialRouteName="LoginScreen"
           options={{
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="happy-outline" size={size} color={color} />
@@ -90,3 +119,11 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
+export default () => {
+  return (
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  );
+};

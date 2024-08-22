@@ -41,14 +41,14 @@ function ExploreScreen() {
     try {
       setIsLoading(true);
 
-      const username = "Abigail";
-      const password = "password123";
-      const token = base64.encode(`${username}:${password}`);
+      // const username = "Abigail";
+      // const password = "password123";
+      // const token = base64.encode(`${username}:${password}`);
 
       const response = await bookingApi.get("/events", {
-        headers: {
-          Authorization: `Basic ${token}`,
-        },
+        // headers: {
+        //   Authorization: `Basic ${token}`,
+        // },
       });
 
       setEvents(response.data);

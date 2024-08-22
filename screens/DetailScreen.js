@@ -47,6 +47,8 @@ function DetailScreen({ route }) {
       ...prevEvent,
       showtime: sortedShowtimes,
     }));
+    console.log("updatedEvent");
+    console.log(updatedEvent);
   }, []);
 
   const handleBookNow = (showtime) => {
@@ -93,7 +95,7 @@ function DetailScreen({ route }) {
   const handleConfirmBooking = (showtime) => {
     Alert.alert(
       "Confirm Booking",
-      `You are about to book ${tickets} tickets(s) for the showtime on ${showtime.date}.`,
+      `You are about to book${tickets} ticket${tickets > 1 ? "s" : ""} for the show time on ${showtime.date}.`,
       [
         {
           text: "Cancel",
