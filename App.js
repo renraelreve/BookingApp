@@ -12,10 +12,13 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import * as SplashScreen from "expo-splash-screen";
 
 import { Colors } from "./styles/colors";
+
+import { PhotoProvider } from "./context/PhotoContext"; // Import the context provider
 import ExploreScreen from "./screens/ExploreScreen";
 import AccountScreen from "./screens/AccountScreen";
 import DetailScreen from "./screens/DetailScreen";
 import PhotoScreen from "./screens/PhotoScreen";
+import PhotoGalleryScreen from "./screens/PhotoGalleryScreen";
 
 const BottomTab = createBottomTabNavigator();
 const Stack = createStackNavigator(); // Create Stack Navigator
@@ -64,39 +67,50 @@ export default function App() {
           headerTitleAlign: "center",
         }}
       />
+
+      <Stack.Screen
+        name="PhotoGallery"
+        component={PhotoGalleryScreen}
+        options={{
+          headerTitle: "View Photo",
+          headerTitleAlign: "center",
+        }}
+      />
     </Stack.Navigator>
   );
 
   return (
-    <NavigationContainer>
-      <BottomTab.Navigator
-        screenOptions={{
-          headerStyle: { backgroundColor: Colors.PRIMARY },
-          headerTintColor: "white",
-          tabBarActiveTintColor: Colors.PRIMARY,
-          headerTitle: "BookingApp",
-          headerTitleAlign: "center",
-        }}
-      >
-        <BottomTab.Screen
-          name="Home"
-          component={ExploreStack}
-          options={{
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="search" size={size} color={color} />
-            ),
+    <PhotoProvider>
+      <NavigationContainer>
+        <BottomTab.Navigator
+          screenOptions={{
+            headerStyle: { backgroundColor: Colors.PRIMARY },
+            headerTintColor: "white",
+            tabBarActiveTintColor: Colors.PRIMARY,
+            headerTitle: "BookingApp",
+            headerTitleAlign: "center",
           }}
-        />
-        <BottomTab.Screen
-          name="Account"
-          component={AccountScreen}
-          options={{
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="happy-outline" size={size} color={color} />
-            ),
-          }}
-        />
-      </BottomTab.Navigator>
-    </NavigationContainer>
+        >
+          <BottomTab.Screen
+            name="Home"
+            component={ExploreStack}
+            options={{
+              tabBarIcon: ({ color, size }) => (
+                <Ionicons name="search" size={size} color={color} />
+              ),
+            }}
+          />
+          <BottomTab.Screen
+            name="Account"
+            component={AccountScreen}
+            options={{
+              tabBarIcon: ({ color, size }) => (
+                <Ionicons name="happy-outline" size={size} color={color} />
+              ),
+            }}
+          />
+        </BottomTab.Navigator>
+      </NavigationContainer>
+    </PhotoProvider>
   );
 }

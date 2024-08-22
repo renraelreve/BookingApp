@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { View, Text, Button, StyleSheet, Image, Alert } from "react-native";
 import {
   launchImageLibraryAsync,
@@ -8,6 +8,7 @@ import {
 } from "expo-image-picker";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
+import { PhotoContext } from "../context/PhotoContext"; // Import PhotoContext
 
 const imageOptions = {
   mediaTypes: MediaTypeOptions.Images,
@@ -16,8 +17,10 @@ const imageOptions = {
   quality: 0.8,
 };
 
-function PhotoScreen({ navigation }) {
+function PhotoScreen({ route, navigation }) {
+  const { event } = route.params;
   const [image, setImage] = useState(null);
+  const { photoUrls, setPhotoUrls } = useContext(PhotoContext); // Use context here
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
 
   const pickImageHandler = async () => {
@@ -65,10 +68,13 @@ function PhotoScreen({ navigation }) {
     if (image) {
       const photoUrl = await uploadToCloudinary(image);
       if (photoUrl) {
+        const updatedPhotoUrls = {
+          ...photoUrls,
+          [event.eid]: [...(photoUrls[event.eid] || []), photoUrl],
+        };
+        setPhotoUrls(updatedPhotoUrls);
         Alert.alert("Photo Uploaded", "Photo was successfully uploaded.");
-        navigation.navigate("Account", {
-          dog: photoUrl, // You can replace 'dog' with your actual object key
-        });
+        navigation.navigate("Detail", { event }); // Navigate back
       }
     } else {
       Alert.alert("No Photo", "Please select or take a photo first.");
@@ -82,9 +88,7 @@ function PhotoScreen({ navigation }) {
       </Text>
       <View style={styles.buttonsContainer}>
         <Button title="Pick a Photo" onPress={pickImageHandler} />
-        {/* Ensure the title prop is a string */}
         <Button title="Take a Photo" onPress={takeImageHandler} />
-        {/* Ensure the title prop is a string */}
       </View>
       {!image && (
         <Text style={styles.instructionText}>No photo selected yet.</Text>
@@ -96,7 +100,6 @@ function PhotoScreen({ navigation }) {
         </View>
       )}
       <Button title="Save" onPress={confirmImageHandler} />
-      {/* Ensure the title prop is a string */}
     </View>
   );
 }

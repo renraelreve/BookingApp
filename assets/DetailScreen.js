@@ -8,24 +8,23 @@ import {
   Alert,
   TextInput,
   TouchableOpacity,
-  Button, // Import Button component
+  Button,
   NativeEventEmitter,
   NativeModules,
 } from "react-native";
-
+import { PhotoContext } from "../context/PhotoContext"; // Import the PhotoContext
 import base64 from "react-native-base64";
 import { useNavigation } from "@react-navigation/native";
-import { PhotoContext } from "../context/PhotoContext"; // Import the PhotoContext
 import { bookingApi } from "../api/bookingApi";
 
 function DetailScreen({ route }) {
-  const { event, isSignedIn } = route.params;
+  const { event } = route.params;
   const { photoUrls, setPhotoUrls } = useContext(PhotoContext); // Use context here
-  const [updatedEvent, setUpdatedEvent] = useState(event); // Track updated event data
+  const [updatedEvent, setUpdatedEvent] = useState(event);
   const [selectedShowtime, setSelectedShowtime] = useState(null);
   const [tickets, setTickets] = useState("");
 
-  const navigation = useNavigation(); // Use the navigation hook
+  const navigation = useNavigation();
 
   // Dummy event details
   const eventDetails = {
@@ -34,7 +33,6 @@ function DetailScreen({ route }) {
     3: "Experience the thrill of the Formula 1 Race with top drivers competing. This event will be held on 24 August 2070. BOOK YOUR TICKETS NOW!",
   };
 
-  // Handle cases where event.eid is not in eventDetails
   const eventDetail = eventDetails[event.eid] || "Details not available.";
 
   const userId = 1;
@@ -43,7 +41,6 @@ function DetailScreen({ route }) {
   const password = "password123";
   const token = base64.encode(`${username}:${password}`);
 
-  // Sort showtimes by date from oldest to latest
   useEffect(() => {
     const sortedShowtimes = [...updatedEvent.showtime].sort(
       (a, b) => new Date(a.date) - new Date(b.date)
@@ -59,7 +56,7 @@ function DetailScreen({ route }) {
   };
 
   const handleBookingSubmit = async (sid) => {
-    const amount = parseInt(tickets, 10); // Parse tickets as an integer
+    const amount = parseInt(tickets, 10);
     if (amount) {
       try {
         const response = await bookingApi.post(
@@ -74,7 +71,6 @@ function DetailScreen({ route }) {
         console.log(response.data);
         Alert.alert("Booking successful!");
 
-        // Update the local state to reflect the new balance tickets
         setUpdatedEvent((prevEvent) => ({
           ...prevEvent,
           showtime: prevEvent.showtime.map((show) =>
@@ -87,7 +83,7 @@ function DetailScreen({ route }) {
         const eventEmitter = new NativeEventEmitter(
           NativeModules.ReactNativeEventEmitter
         );
-        eventEmitter.emit("bookingSuccess"); // Emit the event to notify ExploreScreen
+        eventEmitter.emit("bookingSuccess");
       } catch (error) {
         console.error(error);
         Alert.alert("Booking failed!");
@@ -116,28 +112,30 @@ function DetailScreen({ route }) {
     );
   };
 
+  const updatePhotoUrls = (newPhotoUrls) => {
+    setPhotoUrls(newPhotoUrls);
+  };
+
   return (
     <ScrollView>
       <View style={styles.container}>
         <Text style={styles.description}>{event.description}</Text>
         <Image source={{ uri: event.imageUrl }} style={styles.image} />
 
-        {/* Button to navigate to PhotoScreen */}
         <TouchableOpacity
           style={styles.photoButton}
-          onPress={() => navigation.navigate("Photo", { event })}
+          onPress={() =>
+            navigation.navigate("Photo", {
+              event,
+            })
+          }
         >
           <Text style={styles.buttonText}>Take Event Photo</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.photoButton}
-          onPress={() =>
-            navigation.navigate("PhotoGallery", {
-              event,
-              photoUrls: photoUrls[event.eid],
-            })
-          }
+          onPress={() => navigation.navigate("PhotoGallery", { event })}
         >
           <Text style={styles.buttonText}>View Event Photos</Text>
         </TouchableOpacity>
@@ -183,11 +181,6 @@ function DetailScreen({ route }) {
             </View>
           </View>
         ))}
-        {/* {isSignedIn ? (
-        <Button title="Buy Tickets" onPress={() => {}} />
-      ) : (
-        <Text style={styles.signInPrompt}>Please sign in to buy tickets.</Text>
-      )} */}
       </View>
     </ScrollView>
   );
@@ -281,13 +274,12 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 12,
   },
-
   photoButton: {
     backgroundColor: "#28a745",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
     marginBottom: 20,
-    alignSelf: "center", // Center the button horizontally
+    alignSelf: "center",
   },
 });
