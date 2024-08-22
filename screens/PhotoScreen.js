@@ -11,9 +11,6 @@ import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
 import { PhotoContext } from "../context/PhotoContext"; // Import PhotoContext
 
-console.log(CLOUDINARY_UPLOAD_PRESET); // Should print 'bookingApp'
-console.log(CLOUDINARY_CLOUD_NAME); // Should print 'dfedcek1j'
-
 const imageOptions = {
   mediaTypes: MediaTypeOptions.Images,
   allowsEditing: true,
