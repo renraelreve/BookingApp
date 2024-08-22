@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Text } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createStackNavigator } from "@react-navigation/stack"; 
+import { createStackNavigator } from "@react-navigation/stack";
 import {
   Rubik_400Regular,
   Rubik_700Bold,
@@ -12,12 +12,12 @@ import {
   Satisfy_400Regular,
 } from '@expo-google-fonts/satisfy';
 import Ionicons from "@expo/vector-icons/Ionicons";
+import SplashScreen from "./screens/SplashScreen"; // Import the SplashScreen component
 
 import ExploreScreen from "./screens/ExploreScreen";
 import AccountScreen from "./screens/AccountScreen";
 import DetailScreen from "./screens/DetailScreen";
 
-// Updated colors for a more calming theme
 const Colors = {
   PRIMARY: "#89CFF0",      // Light Blue
   SECONDARY: "#A7D7C5",    // Soft Green
@@ -36,7 +36,19 @@ export default function App() {
     Satisfy_400Regular,
   });
 
+  const [showSplash, setShowSplash] = useState(true); 
+
+  useEffect(() => {
+    setTimeout(() => {
+      setShowSplash(false); 
+    }, 3000);
+  }, []);
+
   if (!fontsLoaded) return null;
+
+  if (showSplash) {
+    return <SplashScreen />; 
+  }
 
   // Define the Stack Navigator
   const ExploreStack = () => (

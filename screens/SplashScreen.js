@@ -1,12 +1,32 @@
-// SplashScreen.js
-import React from "react";
-import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import React, { useRef, useEffect } from "react";
+import { View, Text, StyleSheet } from "react-native";
+import LottieView from 'lottie-react-native';
 
 export default function SplashScreen() {
+  const animation = useRef(null); 
+
+  useEffect(() => {
+    if (animation.current) {
+      animation.current.play();
+    }
+
+    return () => {
+      if (animation.current) {
+        animation.current.reset();
+      }
+    };
+  }, []);
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Bookie</Text>
-      <ActivityIndicator size="large" color="#333333" style={styles.loader} />
+      <LottieView
+        ref={animation}
+        source={require('../loader.json')}
+        autoPlay={false} 
+        loop={true}
+        style={styles.loader}
+      />
     </View>
   );
 }
@@ -20,11 +40,12 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 48,
-    fontFamily: "Satisfy_400Regular", 
+    fontFamily: "Satisfy_400Regular",
     color: "#333333",
-    marginBottom: 20,
+    marginBottom: 5,
   },
   loader: {
-    marginTop: 20,
+    width: 100, // Adjust the size to fit your design
+    height: 100, // Adjust the size to fit your design
   },
 });
