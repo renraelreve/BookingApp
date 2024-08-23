@@ -80,6 +80,8 @@ function App() {
         options={{
           headerTitle: "Event Details",
           headerTitleAlign: "center",
+          headerStyle: { backgroundColor: Colors.PRIMARY },
+          headerTintColor: "white",
         }}
       />
 
@@ -89,6 +91,8 @@ function App() {
         options={{
           headerTitle: "Take Photo",
           headerTitleAlign: "center",
+          headerStyle: { backgroundColor: Colors.PRIMARY },
+          headerTintColor: "white",
         }}
       />
 
@@ -100,7 +104,6 @@ function App() {
           headerTitleAlign: "center",
           headerStyle: { backgroundColor: Colors.PRIMARY },
           headerTintColor: "white",
-          headerTitleAlign: "center",
         }}
       />
     </Stack.Navigator>
