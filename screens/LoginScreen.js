@@ -91,87 +91,56 @@ export default LoginScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: "#DCEEF9",
     alignItems: "center",
-    padding: 10,
+    padding: 20, // Increased padding for better spacing
   },
   instructionText: {
     fontFamily: "Rubik_400Regular",
     textAlign: "center",
     paddingVertical: 20,
   },
-  buttonsContainer: {
-    flexDirection: "row",
-    gap: 10,
-    alignItems: "center",
-  },
-  previewImage: {
-    width: 200,
-    height: 200,
-    marginVertical: 10,
-  },  
-  logo: {
-    marginBottom: 20,
-  },
-  input: {
-    height: 20,
-    width: "100%",
-    marginVertical: 20,
-    borderWidth: 1,
-    padding: 20,
-    borderRadius: 5,
-    borderColor: "#ddd",
-  },
-  button: {
-    backgroundColor: Colors.PRIMARY,
-    borderRadius: 25,
-    padding: 10,
-    alignItems: "center",
-    marginTop: 20,
-    width: '90%',
-  },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 20,
-  },
-  forgotPassword: {
-    color: "#0ed1c0",
-    marginTop: 20,
-    fontSize: 20,
-  },
-  signupContainer: {
-    flexDirection: "row",
-    marginTop: 20,
-  },
-  signupText: {
-    color: "#0ed1c0",
-    marginLeft: 20,
-    fontSize: 20,
-  },
   logoIcon: {
-    width: 20,
-    height: 20,
-    marginTop: 20,
-    marginBottom: 20,
+    width: 50, // Increased size for better visibility
+    height: 50, 
+    marginVertical: 20,
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    width: "90%",
+    width: "100%", // Ensuring it takes full width of the container
+    backgroundColor: "white",
+    borderRadius: 5,
+    marginBottom: 15, // Space between input fields
   },
   input: {
     flex: 1,
     height: 50,
-    marginVertical: 10,
-    borderWidth: 1,
     padding: 10,
-    borderRadius: 5,
+    backgroundColor: "white", // Ensuring background remains white
     borderColor: "#ddd",
+    borderRadius: 5,
   },
   eyeIcon: {
     position: "absolute",
-    right: 1,
-    padding: 20,
+    right: 10,
+    padding: 10,
+  },
+  button: {
+    backgroundColor: "#007BFF", // Darker blue for better visibility
+    borderRadius: 25,
+    padding: 15, // Increased padding for a larger button
+    alignItems: "center",
+    width: '90%',
+    marginVertical: 20, // Space above the button
+  },
+  buttonText: {
+    color: "black",
+    fontWeight: "bold",
+    fontSize: 18, // Slightly smaller font size for better fit
+  },
+  signupContainer: {
+    flexDirection: "row",
+    marginTop: 20,
   },
 });

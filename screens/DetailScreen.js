@@ -6,24 +6,23 @@ import {
   Image,
   ScrollView,
   Alert,
-  TextInput,
   TouchableOpacity,
-  Button, // Import Button component
+  Button,
   NativeEventEmitter,
   NativeModules,
 } from "react-native";
-
-import base64 from "react-native-base64";
 import { Context as AuthContext } from '../context/AuthContext';
 import { bookingApi } from "../api/bookingApi";
-import Calendar from "../components/Calendar.js"
+import base64 from "react-native-base64";
 
 function DetailScreen({ route }) {
   const { event, isSignedIn } = route.params;
   const [updatedEvent, setUpdatedEvent] = useState(event); // Track updated event data
   const [selectedShowtime, setSelectedShowtime] = useState(null);
-  const [tickets, setTickets] = useState("");
-  const { state, username } = useContext(AuthContext);
+  const [tickets, setTickets] = useState(1); // Use a stepper value initialized to 1
+  const { state } = useContext(AuthContext);
+
+  const token = base64.encode(`${state.username}:${state.password}`);
 
   // Dummy event details
   const eventDetails = {
@@ -32,16 +31,8 @@ function DetailScreen({ route }) {
     3: "Experience the thrill of the Formula 1 Race with top drivers competing. This event will be held on 24 August 2070. BOOK YOUR TICKETS NOW!",
   };
 
-  // Handle cases where event.eid is not in eventDetails
   const eventDetail = eventDetails[event.eid] || "Details not available.";
 
-  // const userId = 1;
-
-  // const username = "Abigail";
-  // const password = "password123";
-  const token = base64.encode(`${state.username}:${state.password}`);
-
-  // Sort showtimes by date from oldest to latest
   useEffect(() => {
     const sortedShowtimes = [...updatedEvent.showtime].sort(
       (a, b) => new Date(a.date) - new Date(b.date)
@@ -50,8 +41,6 @@ function DetailScreen({ route }) {
       ...prevEvent,
       showtime: sortedShowtimes,
     }));
-    console.log("updatedEvent");
-    console.log(updatedEvent);
   }, []);
 
   const handleBookNow = (showtime) => {
@@ -59,7 +48,7 @@ function DetailScreen({ route }) {
   };
 
   const handleBookingSubmit = async (sid) => {
-    const amount = parseInt(tickets, 10); // Parse tickets as an integer
+    const amount = parseInt(tickets, 10);
     if (amount) {
       try {
         const getUid = await bookingApi.get("/users/find", {
@@ -70,7 +59,6 @@ function DetailScreen({ route }) {
             name: state.username,
           }
         });
-        console.log("This is it getUid.data.uid the hard way" + getUid.data.uid);
         const response = await bookingApi.post(
           `/booking/users/${getUid.data.uid}/showtimes/${sid}`,
           { bookedSeats: amount },
@@ -80,10 +68,8 @@ function DetailScreen({ route }) {
             },
           }
         );
-        console.log(response.data);
         Alert.alert("Booking successful!");
 
-        // Update the local state to reflect the new balance tickets
         setUpdatedEvent((prevEvent) => ({
           ...prevEvent,
           showtime: prevEvent.showtime.map((show) =>
@@ -91,13 +77,12 @@ function DetailScreen({ route }) {
               ? { ...show, balSeats: show.balSeats - amount }
               : show
           ),
-          
         }));
 
         const eventEmitter = new NativeEventEmitter(
           NativeModules.ReactNativeEventEmitter
         );
-        eventEmitter.emit("bookingSuccess"); // Emit the event to notify ExploreScreen
+        eventEmitter.emit("bookingSuccess");
       } catch (error) {
         console.error(error);
         Alert.alert("Booking failed!");
@@ -118,7 +103,7 @@ function DetailScreen({ route }) {
           text: "Confirm",
           onPress: () => {
             handleBookingSubmit(showtime.sid);
-            setTickets("");
+            setTickets(1); // Reset tickets to 1 after booking
             setSelectedShowtime(null);
           },
         },
@@ -146,21 +131,31 @@ function DetailScreen({ route }) {
             </View>
             <View style={styles.buttonContainer}>
               {selectedShowtime !== show.sid ? (
-                state.username && <TouchableOpacity
-                  style={styles.smallButton}
-                  onPress={() => handleBookNow(show)}
-                >
-                  <Text style={styles.buttonText}>Book Now</Text>
-                </TouchableOpacity>
+                state.username && (
+                  <TouchableOpacity
+                    style={styles.smallButton}
+                    onPress={() => handleBookNow(show)}
+                  >
+                    <Text style={styles.buttonText}>Book Now</Text>
+                  </TouchableOpacity>
+                )
               ) : (
                 <View style={styles.inputAndButtonContainer}>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Tickets"
-                    keyboardType="numeric"
-                    value={tickets}
-                    onChangeText={setTickets}
-                  />
+                  <View style={styles.stepperContainer}>
+                    <TouchableOpacity
+                      style={styles.stepperButton}
+                      onPress={() => setTickets(Math.max(1, tickets - 1))}
+                    >
+                      <Text style={styles.stepperButtonText}>-</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.stepperText}>{tickets}</Text>
+                    <TouchableOpacity
+                      style={styles.stepperButton}
+                      onPress={() => setTickets(tickets + 1)}
+                    >
+                      <Text style={styles.stepperButtonText}>+</Text>
+                    </TouchableOpacity>
+                  </View>
                   <TouchableOpacity
                     style={styles.confirmButton}
                     onPress={() => handleConfirmBooking(show)}
@@ -172,11 +167,6 @@ function DetailScreen({ route }) {
             </View>
           </View>
         ))}
-        {/* {isSignedIn ? (
-        <Button title="Buy Tickets" onPress={() => {}} />
-      ) : (
-        <Text style={styles.signInPrompt}>Please sign in to buy tickets.</Text>
-      )} */}
       </View>
     </ScrollView>
   );
@@ -187,16 +177,10 @@ export default DetailScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    //alignItems: "center",
-    //justifyContent: "center",
     backgroundColor: "#DCEEF9",
   },
-  contentContainer: {
-    alignItems: "center",
-    justifyContent: "flex-start",
-  },
   image: {
-    width: "100%", // Make the image width responsive
+    width: "100%",
     height: 300,
     resizeMode: "cover",
     marginVertical: 20,
@@ -214,11 +198,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 20,
   },
-  signInPrompt: {
-    fontSize: 16,
-    color: "red",
-    marginTop: 20,
-  },
   header: {
     fontSize: 18,
     fontWeight: "bold",
@@ -230,8 +209,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 15,
     padding: 10,
-    borderRadius: 5,
-    backgroundColor: "#f0f0f0",
+    borderRadius: 10, // More rounded corners
+    backgroundColor: "#ffffff", // Soft white background
+    shadowColor: "#000", // Black shadow
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1, // Subtle shadow opacity
+    shadowRadius: 4, // Blur radius
+    elevation: 5, // Shadow for Android
   },
   showtimeInfo: {
     flex: 1,
@@ -254,13 +238,24 @@ const styles = StyleSheet.create({
   inputAndButtonContainer: {
     alignItems: "center",
   },
-  input: {
-    width: 60,
-    padding: 5,
-    borderColor: "gray",
-    borderWidth: 1,
-    borderRadius: 5,
+  stepperContainer: {
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 10,
+  },
+  stepperButton: {
+    backgroundColor: "#007BFF",
+    padding: 8,
+    borderRadius: 5,
+  },
+  stepperButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  stepperText: {
+    fontSize: 16,
+    marginHorizontal: 10,
   },
   confirmButton: {
     backgroundColor: "#28a745",

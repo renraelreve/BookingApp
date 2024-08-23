@@ -1,26 +1,10 @@
 import { useState, useEffect, useContext } from "react";
-import { Colors } from "../styles/colors";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  ScrollView,
-  Alert,
-  TextInput,
-  TouchableOpacity,
-  Button, // Import Button component
-  NativeEventEmitter,
-  NativeModules,
-} from "react-native";
-
+import { View, Text, StyleSheet, ScrollView, Alert, TouchableOpacity } from "react-native";
 import base64 from "react-native-base64";
 import { bookingApi } from "../api/bookingApi";
 import { Context as AuthContext } from "../context/AuthContext";
 
 function AccountScreen({ navigation }) {
-  // function AccountScreen({ route }) {
-  // const { username, password } = route.params;
   const { state, logout } = useContext(AuthContext);
   const [bookings, setBookings] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -28,15 +12,12 @@ function AccountScreen({ navigation }) {
 
   useEffect(() => {
     loadBookings();
-    console.log("UseEffect loadBookings");
   }, []);
 
   const loadBookings = async () => {
     try {
       setIsLoading(true);
-      console.log(state.username, state.password);
       const token = base64.encode(`${state.username}:${state.password}`);
-
       const response = await bookingApi.get("/users/find", {
         headers: {
           Authorization: `Basic ${token}`,
@@ -46,8 +27,6 @@ function AccountScreen({ navigation }) {
         },
       });
       setBookings(response.data);
-      console.log("response.data");
-      console.log(response.data);
     } catch (error) {
       console.log(error);
       if (error.response && error.response.status === 401) {
@@ -72,26 +51,21 @@ function AccountScreen({ navigation }) {
   };
 
   return (
-    <ScrollView>
+    <ScrollView style={styles.scrollcontainer}>
       <View style={styles.container}>
-        {/* <Text>User Id: {bookings.uid}</Text> */}
         {bookings.booking?.map((item, index) => (
-          <View key={index} style={styles.container}>
-            <View style={styles.showtimeText}>
-              <Text>Event: {item.showtimeEventDescription}</Text>
-              <Text>Show time: {item.showtimeDate}</Text>
-              <Text>Total Tickets Booked: {item.bookedSeats}</Text>
-            </View>
+          <View key={index} style={styles.bookingContainer}>
+            <Text style={styles.showtimeText}><Text style={styles.boldText}>Event:</Text> {item.showtimeEventDescription}</Text>
+            <Text style={styles.showtimeText}><Text style={styles.boldText}>Show time:</Text> {item.showtimeDate}</Text>
+            <Text style={styles.showtimeText}><Text style={styles.boldText}>Total Tickets Booked:</Text> {item.bookedSeats}</Text>
           </View>
         ))}
       </View>
-      <View style={styles.container}>
+      <View style={styles.buttonContainer}>
         <TouchableOpacity onPress={calendarHandler} style={styles.button}>
           <Text style={styles.buttonText}>Activate Calendar</Text>
         </TouchableOpacity>
-      </View>
-      <View style={styles.container}>
-        <TouchableOpacity onPress={logoutHandler} style={styles.button}>
+        <TouchableOpacity onPress={logoutHandler} style={styles.logoutButton}>
           <Text style={styles.buttonText}>Logout</Text>
         </TouchableOpacity>
       </View>
@@ -102,99 +76,55 @@ function AccountScreen({ navigation }) {
 export default AccountScreen;
 
 const styles = StyleSheet.create({
+  scrollcontainer: {
+    backgroundColor: "#DCEEF9",
+  },
   container: {
     flex: 1,
-    backgroundColor: "#DCEEF9",
     alignItems: "center",
     padding: 10,
   },
-  contentContainer: {
-    alignItems: "center",
-    justifyContent: "flex-start",
-  },
-  image: {
-    width: "100%", // Make the image width responsive
-    height: 300,
-    resizeMode: "cover",
-    marginVertical: 20,
-    borderRadius: 8,
-  },
-  description: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginVertical: 20,
-  },
-  details: {
-    fontSize: 16,
-    textAlign: "center",
-    marginTop: 20,
-    marginBottom: 20,
-  },
-  signInPrompt: {
-    fontSize: 16,
-    color: "red",
-    marginTop: 20,
-  },
-  header: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 5,
-  },
-  showtimeContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 15,
+  bookingContainer: {
+    width: '90%', // Ensure the bookings container takes up most of the screen width
     padding: 10,
-    borderRadius: 5,
-    backgroundColor: "#f0f0f0",
-  },
-  showtimeInfo: {
-    flex: 1,
+    marginBottom: 10,
+    borderRadius: 10,
+    backgroundColor: '#ffffff',
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5, // Shadow for Android
   },
   showtimeText: {
     fontSize: 16,
-    marginBottom: 2,
+    marginBottom: 5, // Add spacing between each line of text
+  },
+  boldText: {
+    fontWeight: 'bold', // Make the labels bold for emphasis
   },
   buttonContainer: {
-    flexDirection: "row-reverse",
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  button: {
+    backgroundColor: "#89CFF0",
+    borderRadius: 12,
+    padding: 15,
     alignItems: "center",
-  },
-  smallButton: {
-    backgroundColor: "#007BFF",
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-    marginLeft: 10,
-  },
-  inputAndButtonContainer: {
-    alignItems: "center",
-  },
-  input: {
-    width: 60,
-    padding: 5,
-    borderColor: "gray",
-    borderWidth: 1,
-    borderRadius: 5,
     marginBottom: 10,
+    width: "80%",
   },
-  confirmButton: {
-    backgroundColor: "#28a745",
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 5,
+  logoutButton: {
+    backgroundColor: "#FF6347",
+    borderRadius: 12,
+    padding: 15,
+    alignItems: "center",
+    width: "80%",
   },
   buttonText: {
     color: "white",
-    fontSize: 12,
-  },
-  button: {
-    backgroundColor: Colors.PRIMARY,
-    borderRadius: 25,
-    padding: 10,
-    alignItems: "center",
-    marginTop: 20,
-    width: "100%",
+    fontSize: 16,
   },
 });

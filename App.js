@@ -90,6 +90,8 @@ function App() {
         options={{
           headerTitle: "Log In",
           headerTitleAlign: "center",
+          headerStyle: { backgroundColor: Colors.PRIMARY },
+          headerTintColor: "white",
         }}
       />
       <Stack.Screen
@@ -100,6 +102,8 @@ function App() {
             ? state.username + "'s Book!ngs"
             : "Log In",
           headerTitleAlign: "center",
+          headerStyle: { backgroundColor: Colors.PRIMARY },
+          headerTintColor: "white",
         }}
       />
       <Stack.Screen
@@ -110,6 +114,8 @@ function App() {
             ? state.username + "'s Calendar"
             : "Log In",
           headerTitleAlign: "center",
+          headerStyle: { backgroundColor: Colors.PRIMARY },
+          headerTintColor: "white",
         }}
       />
     </Stack.Navigator>
