@@ -25,21 +25,42 @@ const authReducer = (state, action) => {
 const createuser = dispatch => {
   return async ({username, password}) => {
     try {
-      console.log(username, password);
+      console.log("Checking for existing user");
+      const response = await bookingApi.get("/users/find", {
+        headers: {
+          Authorization: `Basic QWJpZ2FpbDpwYXNzd29yZDEyMw==`,
+        },
+        params: {
+          name: username,
+        }
+      });
+      console.log("user exists");
+      Alert.alert("Book!e name taken. Use another.");
+    } catch (error) {
+      try {
       const response = await bookingApi.post("/users", {
           name: username,
           email: username + "@bookie.com",
           password: password,
         }
       );
-      console.log("posting");
+      console.log("posting" + username + " " + password);
       console.log(response);
       Alert.alert(username + " has joined as a Book!e");
-    } catch (error) {
-      Alert.alert("Password at least 6 characters");
-      console.log(error);
+      } catch (error) {
+        Alert.alert("Password at least 6 characters");
+        console.log(error);
+      }
+      console.log('createuser');
+        // Alert.alert("Error! Access denied!");
+        // console.log(error);
+        // if (error.response && error.response.status === 401) {
+        //   Alert.alert(
+        //     "Unauthorized",
+        //     "You are not a book!e yet."
+        //   );
+        // }
     }
-    console.log('createuser');
   };
 };
 
