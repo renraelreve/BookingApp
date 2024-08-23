@@ -62,13 +62,13 @@ function AccountScreen({ navigation }) {
         ))}
       </View>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={calendarHandler} style={styles.button}>
+        {/* <TouchableOpacity onPress={calendarHandler} style={styles.button}>
           <Text style={styles.buttonText}>Activate Calendar</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <TouchableOpacity onPress={logoutHandler} style={styles.logoutButton}>
           <Text style={styles.buttonText}>Logout</Text>
         </TouchableOpacity>
-      </View>
+      </View> 
     </ScrollView>
   );
 }
