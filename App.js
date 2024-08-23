@@ -19,7 +19,6 @@ import ExploreScreen from "./screens/ExploreScreen";
 import AccountScreen from "./screens/AccountScreen";
 import DetailScreen from "./screens/DetailScreenwithCal";
 import LoginScreen from "./screens/LoginScreen";
-import BookieCalendar from "./components/Calendar";
 
 const Colors = {
   PRIMARY: "#89CFF0", // Light Blue
@@ -100,18 +99,6 @@ function App() {
         options={{
           headerTitle: state.username
             ? state.username + "'s Book!ngs"
-            : "Log In",
-          headerTitleAlign: "center",
-          headerStyle: { backgroundColor: Colors.PRIMARY },
-          headerTintColor: "white",
-        }}
-      />
-      <Stack.Screen
-        name="CalendarScreen"
-        component={state.username ? BookieCalendar : LoginScreen}
-        options={{
-          headerTitle: state.username
-            ? state.username + "'s Calendar"
             : "Log In",
           headerTitleAlign: "center",
           headerStyle: { backgroundColor: Colors.PRIMARY },
