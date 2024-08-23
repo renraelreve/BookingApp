@@ -1,32 +1,11 @@
-import React, { useRef, useEffect } from "react";
+import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import LottieView from 'lottie-react-native';
 
 export default function SplashScreen() {
-  const animation = useRef(null); 
-
-  useEffect(() => {
-    if (animation.current) {
-      animation.current.play();
-    }
-
-    return () => {
-      if (animation.current) {
-        animation.current.reset();
-      }
-    };
-  }, []);
-
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Bookie</Text>
-      <LottieView
-        ref={animation}
-        source={require('../loader.json')}
-        autoPlay={false} 
-        loop={true}
-        style={styles.loader}
-      />
+      <Text style={styles.title}>Book!e</Text>
+      <Text style={styles.motto}>Your Gateway to Excitement</Text>
     </View>
   );
 }
@@ -36,16 +15,25 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#DCEEF9",
+    backgroundColor: "#89CFF0", 
   },
   title: {
-    fontSize: 48,
+    fontSize: 65,
     fontFamily: "Satisfy_400Regular",
     color: "#333333",
     marginBottom: 5,
+    textShadowColor: "rgba(0, 0, 0, 0.1)", 
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
   },
-  loader: {
-    width: 100,
-    height: 100, 
+  motto: {
+    fontSize: 20,
+    fontFamily: "Rubik_400Regular",
+    color: "#555555",
+    textAlign: "center",
+    marginTop: 1,
+    textShadowColor: "rgba(0, 0, 0, 0.1)", // Add a subtle shadow
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
   },
 });

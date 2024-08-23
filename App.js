@@ -13,7 +13,7 @@ import {
 } from "@expo-google-fonts/rubik";
 import { Satisfy_400Regular } from "@expo-google-fonts/satisfy";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import SplashScreen from "./screens/SplashScreen"; // Import the SplashScreen component
+import SplashScreen from "./screens/SplashScreen";
 
 import ExploreScreen from "./screens/ExploreScreen";
 import AccountScreen from "./screens/AccountScreen";

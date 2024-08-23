@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#DCEEF9",
     alignItems: "center",
-    padding: 20, // Increased padding for better spacing
+    padding: 20, 
   },
   instructionText: {
     fontFamily: "Rubik_400Regular",
@@ -101,23 +101,23 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   logoIcon: {
-    width: 50, // Increased size for better visibility
+    width: 50,
     height: 50, 
     marginVertical: 20,
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    width: "100%", // Ensuring it takes full width of the container
+    width: "100%", 
     backgroundColor: "white",
     borderRadius: 5,
-    marginBottom: 15, // Space between input fields
+    marginBottom: 15, 
   },
   input: {
     flex: 1,
     height: 50,
     padding: 10,
-    backgroundColor: "white", // Ensuring background remains white
+    backgroundColor: "white",
     borderColor: "#ddd",
     borderRadius: 5,
   },
@@ -127,17 +127,17 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   button: {
-    backgroundColor: "#007BFF", // Darker blue for better visibility
+    backgroundColor: "#007BFF", 
     borderRadius: 25,
-    padding: 15, // Increased padding for a larger button
+    padding: 15,
     alignItems: "center",
     width: '90%',
-    marginVertical: 20, // Space above the button
+    marginVertical: 20,
   },
   buttonText: {
-    color: "black",
+    color: "white",
     fontWeight: "bold",
-    fontSize: 18, // Slightly smaller font size for better fit
+    fontSize: 18, 
   },
   signupContainer: {
     flexDirection: "row",
