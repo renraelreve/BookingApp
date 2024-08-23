@@ -4,6 +4,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack"; // Import Stack Navigator
 import { Provider as AuthProvider } from "./context/AuthContext.js";
 import { Context as AuthContext } from "./context/AuthContext";
+import { PhotoProvider } from "./context/PhotoContext"; // Import the context provider
 import { Text } from "react-native";
 // For using custom fonts
 import {
@@ -145,42 +146,44 @@ function App() {
   );
 
   return (
-    <NavigationContainer>
-      <BottomTab.Navigator
-        screenOptions={{
-          headerStyle: { backgroundColor: Colors.PRIMARY },
-          headerTintColor: "white",
-          tabBarActiveTintColor: Colors.SECONDARY,
-          tabBarStyle: { backgroundColor: Colors.BACKGROUND },
-          headerTitleAlign: "center",
-          headerTitle: () => (
-            <Text style={{ fontFamily: "Satisfy_400Regular", fontSize: 24 }}>
-              Book!e
-            </Text>
-          ),
-        }}
-      >
-        <BottomTab.Screen
-          name="Home"
-          component={ExploreStack}
-          options={{
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="search" size={size} color={color} />
+    <PhotoProvider>
+      <NavigationContainer>
+        <BottomTab.Navigator
+          screenOptions={{
+            headerStyle: { backgroundColor: Colors.PRIMARY },
+            headerTintColor: "white",
+            tabBarActiveTintColor: Colors.SECONDARY,
+            tabBarStyle: { backgroundColor: Colors.BACKGROUND },
+            headerTitleAlign: "center",
+            headerTitle: () => (
+              <Text style={{ fontFamily: "Satisfy_400Regular", fontSize: 24 }}>
+                Book!e
+              </Text>
             ),
           }}
-        />
-        <BottomTab.Screen
-          name="Account"
-          component={AccountStack}
-          initialRouteName="LoginScreen"
-          options={{
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="happy-outline" size={size} color={color} />
-            ),
-          }}
-        />
-      </BottomTab.Navigator>
-    </NavigationContainer>
+        >
+          <BottomTab.Screen
+            name="Home"
+            component={ExploreStack}
+            options={{
+              tabBarIcon: ({ color, size }) => (
+                <Ionicons name="search" size={size} color={color} />
+              ),
+            }}
+          />
+          <BottomTab.Screen
+            name="Account"
+            component={AccountStack}
+            initialRouteName="LoginScreen"
+            options={{
+              tabBarIcon: ({ color, size }) => (
+                <Ionicons name="happy-outline" size={size} color={color} />
+              ),
+            }}
+          />
+        </BottomTab.Navigator>
+      </NavigationContainer>
+    </PhotoProvider>
   );
 }
 
