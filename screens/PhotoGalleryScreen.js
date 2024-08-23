@@ -29,7 +29,7 @@ function PhotoGalleryScreen({ route }) {
       const password = "password123";
       const token = base64.encode(`${username}:${password}`);
 
-      // Use backticks for string interpolation with template literals
+      // Use back ticks for string interpolation with template literals
       console.log("event", event.eid);
       const response = await bookingApi.get(`/event/${event.eid}`, {
         headers: {
