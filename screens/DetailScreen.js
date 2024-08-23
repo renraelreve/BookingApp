@@ -82,12 +82,18 @@ const handleBookingSubmit = async (sid) => {
         ),
       }));
 
-      if (isNativeEventEmitterSupported) {
+      if (Platform.OS === 'ios' && NativeModules.ReactNativeEventEmitter) {
         const eventEmitter = new NativeEventEmitter(NativeModules.ReactNativeEventEmitter);
         eventEmitter.emit("bookingSuccess");
+        console.log("Event emitted successfully on iOS");
+      } else if (Platform.OS !== 'ios') {
+        const eventEmitter = new NativeEventEmitter(NativeModules.ReactNativeEventEmitter);
+        eventEmitter.emit("bookingSuccess");
+        console.log("Event emitted successfully on Android");
+      } else {
+        console.log("NativeEventEmitter not available, skipping event emission");
       }
 
-      // Ensure you are passing the correct data to CalendarScreen
       const bookedShowtime = updatedEvent.showtime.find(show => show.sid === sid);
       if (bookedShowtime) {
         navigation.navigate('CalendarScreen', { 
