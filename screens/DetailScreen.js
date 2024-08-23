@@ -7,27 +7,27 @@ import {
   ScrollView,
   Alert,
   TouchableOpacity,
-  Button,
   Platform,
   NativeModules,
+  NativeEventEmitter,
 } from "react-native";
+import { useNavigation } from '@react-navigation/native';
 import { Context as AuthContext } from '../context/AuthContext';
 import { bookingApi } from "../api/bookingApi";
 import base64 from "react-native-base64";
 
-// Check if NativeEventEmitter is available on the platform
-const isNativeEventEmitterSupported = Platform.OS !== 'ios' || NativeModules.ReactNativeEventEmitter;
+const isNativeEventEmitterSupported = Platform.OS === 'ios' || NativeModules.ReactNativeEventEmitter;
 
 function DetailScreen({ route }) {
-  const { event, isSignedIn } = route.params;
-  const [updatedEvent, setUpdatedEvent] = useState(event); // Track updated event data
+  const { event } = route.params;
+  const [updatedEvent, setUpdatedEvent] = useState(event);
   const [selectedShowtime, setSelectedShowtime] = useState(null);
-  const [tickets, setTickets] = useState(1); // Use a stepper value initialized to 1
+  const [tickets, setTickets] = useState(1);
   const { state } = useContext(AuthContext);
+  const navigation = useNavigation(); 
 
   const token = base64.encode(`${state.username}:${state.password}`);
 
-  // Dummy event details
   const eventDetails = {
     1: "This is a special concert by Taylor Swift featuring her greatest hits. This event will be held on 24 August 2070. BOOK YOUR TICKETS NOW!",
     2: "Watch Singapore take on South Korea in an exciting World Cup Qualifier match. This event will be held on 24 August 2070. BOOK YOUR TICKETS NOW!",
@@ -50,49 +50,58 @@ function DetailScreen({ route }) {
     setSelectedShowtime(showtime.sid);
   };
 
-  const handleBookingSubmit = async (sid) => {
-    const amount = parseInt(tickets, 10);
-    if (amount) {
-      try {
-        const getUid = await bookingApi.get("/users/find", {
+const handleBookingSubmit = async (sid) => {
+  const amount = parseInt(tickets, 10);
+  if (amount) {
+    try {
+      const getUid = await bookingApi.get("/users/find", {
+        headers: {
+          Authorization: `Basic ${token}`,
+        },
+        params: {
+          name: state.username,
+        }
+      });
+      const response = await bookingApi.post(
+        `/booking/users/${getUid.data.uid}/showtimes/${sid}`,
+        { bookedSeats: amount },
+        {
           headers: {
             Authorization: `Basic ${token}`,
           },
-          params: {
-            name: state.username,
-          }
-        });
-        const response = await bookingApi.post(
-          `/booking/users/${getUid.data.uid}/showtimes/${sid}`,
-          { bookedSeats: amount },
-          {
-            headers: {
-              Authorization: `Basic ${token}`,
-            },
-          }
-        );
-        Alert.alert("Booking successful!");
-
-        setUpdatedEvent((prevEvent) => ({
-          ...prevEvent,
-          showtime: prevEvent.showtime.map((show) =>
-            show.sid === sid
-              ? { ...show, balSeats: show.balSeats - amount }
-              : show
-          ),
-        }));
-
-        if (isNativeEventEmitterSupported) {
-          const eventEmitter = new NativeEventEmitter(NativeModules.ReactNativeEventEmitter);
-          eventEmitter.emit("bookingSuccess");
         }
+      );
+      Alert.alert("Booking successful!");
 
-      } catch (error) {
-        console.error(error);
-        Alert.alert("Booking failed!");
+      setUpdatedEvent((prevEvent) => ({
+        ...prevEvent,
+        showtime: prevEvent.showtime.map((show) =>
+          show.sid === sid
+            ? { ...show, balSeats: show.balSeats - amount }
+            : show
+        ),
+      }));
+
+      if (isNativeEventEmitterSupported) {
+        const eventEmitter = new NativeEventEmitter(NativeModules.ReactNativeEventEmitter);
+        eventEmitter.emit("bookingSuccess");
       }
+
+      // Ensure you are passing the correct data to CalendarScreen
+      const bookedShowtime = updatedEvent.showtime.find(show => show.sid === sid);
+      if (bookedShowtime) {
+        navigation.navigate('CalendarScreen', { 
+          eventName: event.description, 
+          showtimeDate: bookedShowtime.date 
+        });
+      }
+
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Booking failed!");
     }
-  };
+  }
+};
 
   const handleConfirmBooking = (showtime) => {
     Alert.alert(
@@ -107,7 +116,7 @@ function DetailScreen({ route }) {
           text: "Confirm",
           onPress: () => {
             handleBookingSubmit(showtime.sid);
-            setTickets(1); // Reset tickets to 1 after booking
+            setTickets(1); 
             setSelectedShowtime(null);
           },
         },
