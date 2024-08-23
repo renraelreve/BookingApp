@@ -19,6 +19,10 @@ import base64 from "react-native-base64";
 
 const isNativeEventEmitterSupported =
   Platform.OS === "ios" || NativeModules.ReactNativeEventEmitter;
+console.log(
+  "EVENT EMITTER SUPPORTED EVENT EMITTER SUPPORTED" +
+    isNativeEventEmitterSupported
+);
 
 function DetailScreen({ route }) {
   const { event } = route.params;
@@ -156,6 +160,7 @@ function DetailScreen({ route }) {
         >
           <Text style={styles.buttonText}>View Event Photos</Text>
         </TouchableOpacity>
+
         <Text style={styles.details}>{eventDetail}</Text>
         <Text style={styles.header}>Showtimes:</Text>
         {updatedEvent.showtime.map((show, index) => (

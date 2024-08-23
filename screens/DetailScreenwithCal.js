@@ -11,14 +11,18 @@ import {
   NativeModules,
   NativeEventEmitter,
 } from "react-native";
-import { useNavigation } from '@react-navigation/native';
-import { Context as AuthContext } from '../context/AuthContext';
+import { useNavigation } from "@react-navigation/native";
+import { Context as AuthContext } from "../context/AuthContext";
 import { bookingApi } from "../api/bookingApi";
 import base64 from "react-native-base64";
-import * as Calendar from 'expo-calendar';
+import * as Calendar from "expo-calendar";
 
-const isNativeEventEmitterSupported = Platform.OS !== 'ios' || NativeModules.ReactNativeEventEmitter;
-console.log("EVENT EMITTER SUPPORTED EVENT EMITTER SUPPORTED" + isNativeEventEmitterSupported);
+const isNativeEventEmitterSupported =
+  Platform.OS !== "ios" || NativeModules.ReactNativeEventEmitter;
+console.log(
+  "EVENT EMITTER SUPPORTED EVENT EMITTER SUPPORTED" +
+    isNativeEventEmitterSupported
+);
 
 function DetailScreen({ route }) {
   const { event } = route.params;
@@ -26,7 +30,7 @@ function DetailScreen({ route }) {
   const [selectedShowtime, setSelectedShowtime] = useState(null);
   const [tickets, setTickets] = useState(1);
   const { state } = useContext(AuthContext);
-  const navigation = useNavigation(); 
+  const navigation = useNavigation();
 
   const token = base64.encode(`${state.username}:${state.password}`);
 
@@ -52,63 +56,66 @@ function DetailScreen({ route }) {
     setSelectedShowtime(showtime.sid);
   };
 
-const handleBookingSubmit = async (sid) => {
-  const amount = parseInt(tickets, 10);
-  if (amount) {
-    try {
-      const getUid = await bookingApi.get("/users/find", {
-        headers: {
-          Authorization: `Basic ${token}`,
-        },
-        params: {
-          name: state.username,
-        }
-      });
-      const response = await bookingApi.post(
-        `/booking/users/${getUid.data.uid}/showtimes/${sid}`,
-        { bookedSeats: amount },
-        {
+  const handleBookingSubmit = async (sid) => {
+    const amount = parseInt(tickets, 10);
+    if (amount) {
+      try {
+        const getUid = await bookingApi.get("/users/find", {
           headers: {
             Authorization: `Basic ${token}`,
           },
+          params: {
+            name: state.username,
+          },
+        });
+        const response = await bookingApi.post(
+          `/booking/users/${getUid.data.uid}/showtimes/${sid}`,
+          { bookedSeats: amount },
+          {
+            headers: {
+              Authorization: `Basic ${token}`,
+            },
+          }
+        );
+        Alert.alert("Booking successful!");
+
+        setUpdatedEvent((prevEvent) => ({
+          ...prevEvent,
+          showtime: prevEvent.showtime.map((show) =>
+            show.sid === sid
+              ? { ...show, balSeats: show.balSeats - amount }
+              : show
+          ),
+        }));
+
+        if (isNativeEventEmitterSupported) {
+          const eventEmitter = new NativeEventEmitter(
+            NativeModules.ReactNativeEventEmitter
+          );
+          eventEmitter.emit("bookingSuccess");
         }
-      );
-      Alert.alert("Booking successful!");
 
-      setUpdatedEvent((prevEvent) => ({
-        ...prevEvent,
-        showtime: prevEvent.showtime.map((show) =>
-          show.sid === sid
-            ? { ...show, balSeats: show.balSeats - amount }
-            : show
-        ),
-      }));
-
-      if (isNativeEventEmitterSupported) {
-        const eventEmitter = new NativeEventEmitter(NativeModules.ReactNativeEventEmitter);
-        eventEmitter.emit("bookingSuccess");
+        // Ensure you are passing the correct data to CalendarScreen
+        // const bookedShowtime = updatedEvent.showtime.find(show => show.sid === sid);
+        // if (bookedShowtime) {
+        //   navigation.navigate('CalendarScreen', {
+        //     eventName: event.description,
+        //     showtimeDate: bookedShowtime.date
+        //   });
+        // }
+      } catch (error) {
+        console.error(error);
+        Alert.alert("Booking failed!");
       }
-
-      // Ensure you are passing the correct data to CalendarScreen
-      // const bookedShowtime = updatedEvent.showtime.find(show => show.sid === sid);
-      // if (bookedShowtime) {
-      //   navigation.navigate('CalendarScreen', { 
-      //     eventName: event.description, 
-      //     showtimeDate: bookedShowtime.date 
-      //   });
-      // }
-
-    } catch (error) {
-      console.error(error);
-      Alert.alert("Booking failed!");
     }
-  }
-};
+  };
 
-  const handleConfirmBooking = ( showtime, eventTitle ) => {
+  const handleConfirmBooking = (showtime, eventTitle) => {
     Alert.alert(
       "Confirm Booking",
-      `You are about to book ${tickets} ticket${tickets > 1 ? "s" : ""} for the show time on ${showtime.date}.`,
+      `You are about to book ${tickets} ticket${
+        tickets > 1 ? "s" : ""
+      } for the show time on ${showtime.date}.`,
       [
         {
           text: "Cancel",
@@ -118,9 +125,9 @@ const handleBookingSubmit = async (sid) => {
           text: "Confirm",
           onPress: () => {
             handleBookingSubmit(showtime.sid);
-            setTickets(1); 
+            setTickets(1);
             setSelectedShowtime(null);
-            createEvent( eventTitle, new Date(showtime.date));
+            createEvent(eventTitle, new Date(showtime.date));
             console.log("Generated Date(): " + Date());
             console.log("Passed date: " + showtime.date);
             console.log("Converted date: " + new Date(showtime.date));
@@ -134,11 +141,13 @@ const handleBookingSubmit = async (sid) => {
   useEffect(() => {
     (async () => {
       const { status } = await Calendar.requestCalendarPermissionsAsync();
-      if (status === 'granted') {
-        const calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.EVENT);
-        console.log('Here are all your calendars:', calendars);
+      if (status === "granted") {
+        const calendars = await Calendar.getCalendarsAsync(
+          Calendar.EntityTypes.EVENT
+        );
+        console.log("Here are all your calendars:", calendars);
       } else {
-        console.error('Calendar permission not granted'); 
+        console.error("Calendar permission not granted");
       }
     })();
   }, []);
@@ -148,6 +157,28 @@ const handleBookingSubmit = async (sid) => {
       <View style={styles.container}>
         <Text style={styles.description}>{event.description}</Text>
         <Image source={{ uri: event.imageUrl }} style={styles.image} />
+
+        {/* Button to navigate to PhotoScreen */}
+        {state.username && (
+          <TouchableOpacity
+            style={styles.photoButton}
+            onPress={() => navigation.navigate("Photo", { event })}
+          >
+            <Text style={styles.buttonText}>Take Event Photo</Text>
+          </TouchableOpacity>
+        )}
+
+        <TouchableOpacity
+          style={styles.photoButton}
+          onPress={() =>
+            navigation.navigate("PhotoGallery", {
+              event,
+            })
+          }
+        >
+          <Text style={styles.buttonText}>View Event Photos</Text>
+        </TouchableOpacity>
+
         <Text style={styles.details}>{eventDetail}</Text>
         <Text style={styles.header}>Showtimes:</Text>
         {updatedEvent.showtime.map((show, index) => (
@@ -190,7 +221,9 @@ const handleBookingSubmit = async (sid) => {
                   </View>
                   <TouchableOpacity
                     style={styles.confirmButton}
-                    onPress={() => handleConfirmBooking( show, event.description )}
+                    onPress={() =>
+                      handleConfirmBooking(show, event.description)
+                    }
                   >
                     <Text style={styles.buttonText}>Confirm</Text>
                   </TouchableOpacity>
@@ -208,42 +241,49 @@ export default DetailScreen;
 
 // more Calendar code
 async function getDefaultCalendarId() {
-  const calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.EVENT);
-  console.log('Fetched calendars:', calendars);
-  
-  const defaultCalendar = calendars.find(calendar => calendar.allowsModifications);
-  
+  const calendars = await Calendar.getCalendarsAsync(
+    Calendar.EntityTypes.EVENT
+  );
+  console.log("Fetched calendars:", calendars);
+
+  const defaultCalendar = calendars.find(
+    (calendar) => calendar.allowsModifications
+  );
+
   if (!defaultCalendar) {
-    Alert.alert('No writable calendars', 'Please make sure you have a writable calendar.');
-    console.error('No writable calendar found');
+    Alert.alert(
+      "No writable calendars",
+      "Please make sure you have a writable calendar."
+    );
+    console.error("No writable calendar found");
     return null;
   }
-  
-  console.log('Using Calendar ID:', defaultCalendar.id);
+
+  console.log("Using Calendar ID:", defaultCalendar.id);
   return defaultCalendar.id;
 }
 
-async function createEvent( eventTitle, eventDate ) {
+async function createEvent(eventTitle, eventDate) {
   const calendarId = await getDefaultCalendarId();
-  
+
   if (!calendarId) return;
 
   try {
-    console.log('Creating event in calendar with ID:', calendarId); 
+    console.log("Creating event in calendar with ID:", calendarId);
     console.log("Received Date in createEvent(): " + eventDate);
     const newEventID = await Calendar.createEventAsync(calendarId, {
       title: eventTitle,
       startDate: eventDate,
       endDate: eventDate,
-      allDay: true, 
+      allDay: true,
       accessLevel: Calendar.CalendarAccessLevel.OWNER,
     });
 
     // Alert.alert('Success', `Your new event ID is: ${newEventID}`);
-    console.log('Event created with ID:', newEventID); 
+    console.log("Event created with ID:", newEventID);
   } catch (e) {
-    Alert.alert('Event not added to calendar', e.message);
-    console.error('Error adding event to calendar:', e.message);
+    Alert.alert("Event not added to calendar", e.message);
+    console.error("Error adding event to calendar:", e.message);
   }
 }
 
@@ -284,13 +324,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 15,
     padding: 10,
-    borderRadius: 10, 
-    backgroundColor: "#ffffff", 
+    borderRadius: 10,
+    backgroundColor: "#ffffff",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1, 
-    shadowRadius: 4, 
-    elevation: 5, 
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5,
   },
   showtimeInfo: {
     flex: 1,
@@ -341,5 +381,13 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontSize: 12,
+  },
+  photoButton: {
+    backgroundColor: "#28a745",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginBottom: 20,
+    alignSelf: "center", // Center the button horizontally
   },
 });

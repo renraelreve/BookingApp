@@ -20,7 +20,7 @@ import SplashScreen from "./screens/SplashScreen";
 
 import ExploreScreen from "./screens/ExploreScreen";
 import AccountScreen from "./screens/AccountScreen";
-import DetailScreen from "./screens/DetailScreen";
+// import DetailScreen from "./screens/DetailScreen";
 import PhotoScreen from "./screens/PhotoScreen";
 import PhotoGalleryScreen from "./screens/PhotoGalleryScreen";
 import DetailScreen from "./screens/DetailScreenwithCal";
