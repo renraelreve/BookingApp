@@ -136,14 +136,15 @@ function DetailScreen({ route }) {
       <View style={styles.container}>
         <Text style={styles.description}>{event.description}</Text>
         <Image source={{ uri: event.imageUrl }} style={styles.image} />
-
         {/* Button to navigate to PhotoScreen */}
-        <TouchableOpacity
-          style={styles.photoButton}
-          onPress={() => navigation.navigate("Photo", { event })}
-        >
-          <Text style={styles.buttonText}>Take Event Photo</Text>
-        </TouchableOpacity>
+        {state.username && (
+          <TouchableOpacity
+            style={styles.photoButton}
+            onPress={() => navigation.navigate("Photo", { event })}
+          >
+            <Text style={styles.buttonText}>Take Event Photo</Text>
+          </TouchableOpacity>
+        )}
 
         <TouchableOpacity
           style={styles.photoButton}
@@ -155,7 +156,6 @@ function DetailScreen({ route }) {
         >
           <Text style={styles.buttonText}>View Event Photos</Text>
         </TouchableOpacity>
-
         <Text style={styles.details}>{eventDetail}</Text>
         <Text style={styles.header}>Showtimes:</Text>
         {updatedEvent.showtime.map((show, index) => (

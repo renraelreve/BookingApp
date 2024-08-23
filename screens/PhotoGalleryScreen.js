@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import axios from "axios";
+
 import { useIsFocused } from "@react-navigation/native"; // Import useIsFocused to check if the screen is focused
 import { bookingApi } from "../api/bookingApi"; // Adjust the import based on your project structure
 import base64 from "react-native-base64";
