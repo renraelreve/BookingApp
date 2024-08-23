@@ -15,7 +15,7 @@ import { Satisfy_400Regular } from "@expo-google-fonts/satisfy";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import SplashScreen from "./screens/SplashScreen";
 
-import { Colors } from "./styles/colors";
+// import { Colors } from "./styles/colors";
 
 import ExploreScreen from "./screens/ExploreScreen";
 import AccountScreen from "./screens/AccountScreen";
@@ -31,7 +31,7 @@ const Colors = {
   BACKGROUND: "#F7F8FA", // Light Gray
   TEXT: "#333333", // Dark Gray
   ACCENT: "#F7E8A4", // Soft Yellow
-}
+};
 
 const BottomTab = createBottomTabNavigator();
 const Stack = createStackNavigator();
