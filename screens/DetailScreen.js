@@ -63,7 +63,8 @@ function DetailScreen({ route }) {
           params: {
             name: state.username,
           },
-        });
+        }); // Corrected the missing parenthesis here
+
         const response = await bookingApi.post(
           `/booking/users/${getUid.data.uid}/showtimes/${sid}`,
           { bookedSeats: amount },
@@ -73,6 +74,7 @@ function DetailScreen({ route }) {
             },
           }
         );
+
         Alert.alert("Booking successful!");
 
         setUpdatedEvent((prevEvent) => ({
@@ -86,12 +88,12 @@ function DetailScreen({ route }) {
 
         if (isNativeEventEmitterSupported) {
           const eventEmitter = new NativeEventEmitter(
-            NativeModules.ReactNativeEventEmitter
+            NativeModules.ReactNativeEventEmitter || NativeModules.ToastExample
           );
           eventEmitter.emit("bookingSuccess");
+          console.log("Event emitted successfully");
         }
 
-        // Ensure you are passing the correct data to CalendarScreen
         const bookedShowtime = updatedEvent.showtime.find(
           (show) => show.sid === sid
         );
@@ -309,13 +311,12 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 12,
   },
-
   photoButton: {
     backgroundColor: "#28a745",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
     marginBottom: 20,
-    alignSelf: "center", // Center the button horizontally
+    alignSelf: "center",
   },
 });
