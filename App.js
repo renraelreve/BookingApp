@@ -17,7 +17,7 @@ import SplashScreen from "./screens/SplashScreen";
 
 import ExploreScreen from "./screens/ExploreScreen";
 import AccountScreen from "./screens/AccountScreen";
-import DetailScreen from "./screens/DetailScreen";
+import DetailScreen from "./screens/DetailScreenwithCal";
 import LoginScreen from "./screens/LoginScreen";
 import BookieCalendar from "./components/Calendar";
 
