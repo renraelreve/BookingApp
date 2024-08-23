@@ -1,43 +1,64 @@
-import { useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack"; // Import Stack Navigator
+import { Provider as AuthProvider } from "./context/AuthContext.js";
+import { Context as AuthContext } from "./context/AuthContext";
+import { Text } from "react-native";
 // For using custom fonts
 import {
   Rubik_400Regular,
   Rubik_700Bold,
   useFonts,
 } from "@expo-google-fonts/rubik";
+import { Satisfy_400Regular } from "@expo-google-fonts/satisfy";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import * as SplashScreen from "expo-splash-screen";
+import SplashScreen from "./screens/SplashScreen";
 
 import { Colors } from "./styles/colors";
 
-import { PhotoProvider } from "./context/PhotoContext"; // Import the context provider
 import ExploreScreen from "./screens/ExploreScreen";
 import AccountScreen from "./screens/AccountScreen";
 import DetailScreen from "./screens/DetailScreen";
 import PhotoScreen from "./screens/PhotoScreen";
 import PhotoGalleryScreen from "./screens/PhotoGalleryScreen";
+import LoginScreen from "./screens/LoginScreen";
+import BookieCalendar from "./components/Calendar";
+
+const Colors = {
+  PRIMARY: "#89CFF0", // Light Blue
+  SECONDARY: "#A7D7C5", // Soft Green
+  BACKGROUND: "#F7F8FA", // Light Gray
+  TEXT: "#333333", // Dark Gray
+  ACCENT: "#F7E8A4", // Soft Yellow
+}
 
 const BottomTab = createBottomTabNavigator();
-const Stack = createStackNavigator(); // Create Stack Navigator
+const Stack = createStackNavigator();
 
-SplashScreen.preventAutoHideAsync();
+function App() {
+  const { state } = useContext(AuthContext);
+  console.log(state);
 
-export default function App() {
   const [fontsLoaded] = useFonts({
     Rubik_400Regular,
     Rubik_700Bold,
+    Satisfy_400Regular,
   });
 
+  const [showSplash, setShowSplash] = useState(true);
+
   useEffect(() => {
-    if (fontsLoaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
+    setTimeout(() => {
+      setShowSplash(false);
+    }, 3000);
+  }, []);
 
   if (!fontsLoaded) return null;
+
+  if (showSplash) {
+    return <SplashScreen />;
+  }
 
   // Define the Stack Navigator
   const ExploreStack = () => (
@@ -47,6 +68,8 @@ export default function App() {
         component={ExploreScreen}
         options={{
           headerTitle: "Explore",
+          headerStyle: { backgroundColor: Colors.PRIMARY },
+          headerTintColor: "white",
           headerTitleAlign: "center",
         }}
       />
@@ -74,43 +97,97 @@ export default function App() {
         options={{
           headerTitle: "View Photo",
           headerTitleAlign: "center",
+          headerStyle: { backgroundColor: Colors.PRIMARY },
+          headerTintColor: "white",
+          headerTitleAlign: "center",
+        }}
+      />
+    </Stack.Navigator>
+  );
+
+  const AccountStack = () => (
+    <Stack.Navigator initialRouteName={"LoginScreen"}>
+      <Stack.Screen
+        name="LoginScreen"
+        component={LoginScreen}
+        options={{
+          headerTitle: "Log In",
+          headerTitleAlign: "center",
+          headerStyle: { backgroundColor: Colors.PRIMARY },
+          headerTintColor: "white",
+        }}
+      />
+      <Stack.Screen
+        name="AccountScreen"
+        component={state.username ? AccountScreen : LoginScreen}
+        options={{
+          headerTitle: state.username
+            ? state.username + "'s Book!ngs"
+            : "Log In",
+          headerTitleAlign: "center",
+          headerStyle: { backgroundColor: Colors.PRIMARY },
+          headerTintColor: "white",
+        }}
+      />
+      <Stack.Screen
+        name="CalendarScreen"
+        component={state.username ? BookieCalendar : LoginScreen}
+        options={{
+          headerTitle: state.username
+            ? state.username + "'s Calendar"
+            : "Log In",
+          headerTitleAlign: "center",
+          headerStyle: { backgroundColor: Colors.PRIMARY },
+          headerTintColor: "white",
         }}
       />
     </Stack.Navigator>
   );
 
   return (
-    <PhotoProvider>
-      <NavigationContainer>
-        <BottomTab.Navigator
-          screenOptions={{
-            headerStyle: { backgroundColor: Colors.PRIMARY },
-            headerTintColor: "white",
-            tabBarActiveTintColor: Colors.PRIMARY,
-            headerTitle: "BookingApp",
-            headerTitleAlign: "center",
+    <NavigationContainer>
+      <BottomTab.Navigator
+        screenOptions={{
+          headerStyle: { backgroundColor: Colors.PRIMARY },
+          headerTintColor: "white",
+          tabBarActiveTintColor: Colors.SECONDARY,
+          tabBarStyle: { backgroundColor: Colors.BACKGROUND },
+          headerTitleAlign: "center",
+          headerTitle: () => (
+            <Text style={{ fontFamily: "Satisfy_400Regular", fontSize: 24 }}>
+              Book!e
+            </Text>
+          ),
+        }}
+      >
+        <BottomTab.Screen
+          name="Home"
+          component={ExploreStack}
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="search" size={size} color={color} />
+            ),
           }}
-        >
-          <BottomTab.Screen
-            name="Home"
-            component={ExploreStack}
-            options={{
-              tabBarIcon: ({ color, size }) => (
-                <Ionicons name="search" size={size} color={color} />
-              ),
-            }}
-          />
-          <BottomTab.Screen
-            name="Account"
-            component={AccountScreen}
-            options={{
-              tabBarIcon: ({ color, size }) => (
-                <Ionicons name="happy-outline" size={size} color={color} />
-              ),
-            }}
-          />
-        </BottomTab.Navigator>
-      </NavigationContainer>
-    </PhotoProvider>
+        />
+        <BottomTab.Screen
+          name="Account"
+          component={AccountStack}
+          initialRouteName="LoginScreen"
+          options={{
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="happy-outline" size={size} color={color} />
+            ),
+          }}
+        />
+      </BottomTab.Navigator>
+    </NavigationContainer>
   );
 }
+
+export default () => {
+  return (
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  );
+};
