@@ -90,13 +90,13 @@ const handleBookingSubmit = async (sid) => {
       }
 
       // Ensure you are passing the correct data to CalendarScreen
-      const bookedShowtime = updatedEvent.showtime.find(show => show.sid === sid);
-      if (bookedShowtime) {
-        navigation.navigate('CalendarScreen', { 
-          eventName: event.description, 
-          showtimeDate: bookedShowtime.date 
-        });
-      }
+      // const bookedShowtime = updatedEvent.showtime.find(show => show.sid === sid);
+      // if (bookedShowtime) {
+      //   navigation.navigate('CalendarScreen', { 
+      //     eventName: event.description, 
+      //     showtimeDate: bookedShowtime.date 
+      //   });
+      // }
 
     } catch (error) {
       console.error(error);
@@ -239,11 +239,11 @@ async function createEvent( eventTitle, eventDate ) {
       accessLevel: Calendar.CalendarAccessLevel.OWNER,
     });
 
-    Alert.alert('Success', `Your new event ID is: ${newEventID}`);
+    // Alert.alert('Success', `Your new event ID is: ${newEventID}`);
     console.log('Event created with ID:', newEventID); 
   } catch (e) {
-    Alert.alert('Event not saved', e.message);
-    console.error('Error creating event:', e.message);
+    Alert.alert('Event not added to calendar', e.message);
+    console.error('Error adding event to calendar:', e.message);
   }
 }
 
