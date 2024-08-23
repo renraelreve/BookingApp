@@ -8,12 +8,15 @@ import {
   Alert,
   TouchableOpacity,
   Button,
-  NativeEventEmitter,
+  Platform,
   NativeModules,
 } from "react-native";
 import { Context as AuthContext } from '../context/AuthContext';
 import { bookingApi } from "../api/bookingApi";
 import base64 from "react-native-base64";
+
+// Check if NativeEventEmitter is available on the platform
+const isNativeEventEmitterSupported = Platform.OS !== 'ios' || NativeModules.ReactNativeEventEmitter;
 
 function DetailScreen({ route }) {
   const { event, isSignedIn } = route.params;
@@ -79,10 +82,11 @@ function DetailScreen({ route }) {
           ),
         }));
 
-        const eventEmitter = new NativeEventEmitter(
-          NativeModules.ReactNativeEventEmitter
-        );
-        eventEmitter.emit("bookingSuccess");
+        if (isNativeEventEmitterSupported) {
+          const eventEmitter = new NativeEventEmitter(NativeModules.ReactNativeEventEmitter);
+          eventEmitter.emit("bookingSuccess");
+        }
+
       } catch (error) {
         console.error(error);
         Alert.alert("Booking failed!");
@@ -178,6 +182,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#DCEEF9",
+    paddingLeft: 15,
+    paddingRight: 15,
   },
   image: {
     width: "100%",
@@ -209,13 +215,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 15,
     padding: 10,
-    borderRadius: 10, // More rounded corners
-    backgroundColor: "#ffffff", // Soft white background
-    shadowColor: "#000", // Black shadow
+    borderRadius: 10, 
+    backgroundColor: "#ffffff", 
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1, // Subtle shadow opacity
-    shadowRadius: 4, // Blur radius
-    elevation: 5, // Shadow for Android
+    shadowOpacity: 0.1, 
+    shadowRadius: 4, 
+    elevation: 5, 
   },
   showtimeInfo: {
     flex: 1,

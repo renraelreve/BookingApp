@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   bookingContainer: {
-    width: '90%', // Ensure the bookings container takes up most of the screen width
+    width: '90%', 
     padding: 10,
     marginBottom: 10,
     borderRadius: 10,
@@ -94,14 +94,14 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 5, // Shadow for Android
+    elevation: 5, 
   },
   showtimeText: {
     fontSize: 16,
-    marginBottom: 5, // Add spacing between each line of text
+    marginBottom: 5, 
   },
   boldText: {
-    fontWeight: 'bold', // Make the labels bold for emphasis
+    fontWeight: 'bold', 
   },
   buttonContainer: {
     width: '100%',
