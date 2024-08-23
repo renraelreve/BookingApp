@@ -1,5 +1,5 @@
 import { CLOUDINARY_UPLOAD_PRESET, CLOUDINARY_CLOUD_NAME } from "@env";
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { View, Text, Button, StyleSheet, Image, Alert } from "react-native";
 import {
   launchImageLibraryAsync,
@@ -8,8 +8,9 @@ import {
   useCameraPermissions,
 } from "expo-image-picker";
 import axios from "axios";
+import base64 from "react-native-base64";
 import { useNavigation } from "@react-navigation/native";
-import { PhotoContext } from "../context/PhotoContext"; // Import PhotoContext
+import { bookingApi } from "../api/bookingApi";
 
 const imageOptions = {
   mediaTypes: MediaTypeOptions.Images,
@@ -21,7 +22,6 @@ const imageOptions = {
 function PhotoScreen({ route, navigation }) {
   const { event } = route.params;
   const [image, setImage] = useState(null);
-  const { photoUrls, setPhotoUrls } = useContext(PhotoContext); // Use context here
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
 
   const pickImageHandler = async () => {
@@ -30,6 +30,17 @@ function PhotoScreen({ route, navigation }) {
   };
 
   const takeImageHandler = async () => {
+    if (!cameraPermission.granted) {
+      const permissionResponse = await requestCameraPermission();
+      if (!permissionResponse.granted) {
+        Alert.alert(
+          "Insufficient permissions!",
+          "You need to grant camera permissions to use this feature."
+        );
+        return;
+      }
+    }
+
     const result = await launchCameraAsync(imageOptions);
     if (!result.canceled) setImage(result.assets[0].uri);
   };
@@ -41,7 +52,7 @@ function PhotoScreen({ route, navigation }) {
       type: "image/jpeg",
       name: "photo.jpg",
     });
-    data.append("upload_preset", CLOUDINARY_UPLOAD_PRESET); // Ensure the upload preset is a string
+    data.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
     data.append("cloud_name", CLOUDINARY_CLOUD_NAME);
 
     try {
@@ -65,17 +76,56 @@ function PhotoScreen({ route, navigation }) {
     }
   };
 
+  const userId = 1;
+
+  const username = "Abigail";
+  const password = "password123";
+  const token = base64.encode(`${username}:${password}`);
+
   const confirmImageHandler = async () => {
     if (image) {
-      const photoUrl = await uploadToCloudinary(image);
-      if (photoUrl) {
-        const updatedPhotoUrls = {
-          ...photoUrls,
-          [event.eid]: [...(photoUrls[event.eid] || []), photoUrl],
-        };
-        setPhotoUrls(updatedPhotoUrls);
-        Alert.alert("Photo Uploaded", "Photo was successfully uploaded.");
-        navigation.navigate("Detail", { event }); // Navigate back
+      try {
+        const photoUrl = await uploadToCloudinary(image);
+        if (photoUrl) {
+          try {
+            // POST the photo URL to the backend
+            const response = await bookingApi.post(
+              `/api/event/${event.eid}/cloudimage`,
+              {
+                url: photoUrl,
+              },
+              {
+                headers: {
+                  Authorization: `Basic ${token}`,
+                },
+              }
+            );
+
+            if (response.status === 201) {
+              Alert.alert(
+                "Photo Uploaded",
+                "Photo was successfully uploaded and saved."
+              );
+              navigation.navigate("Detail", { event }); // Navigate back
+            } else {
+              Alert.alert(
+                "Upload Failed",
+                "The photo was uploaded but could not be saved."
+              );
+            }
+          } catch (error) {
+            console.error(
+              "Error saving photo to backend",
+              error.response?.data || error.message
+            );
+            Alert.alert("Error", "Could not save the photo to the backend.");
+          }
+        } else {
+          Alert.alert("Upload Failed", "Could not get the photo URL.");
+        }
+      } catch (error) {
+        console.error("Error uploading photo", error.message);
+        Alert.alert("Upload Failed", "Could not upload photo to Cloudinary.");
       }
     } else {
       Alert.alert("No Photo", "Please select or take a photo first.");
